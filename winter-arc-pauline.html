@@ -1,0 +1,1062 @@
+<title>Winter Arc Pauline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@500;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: a 3D pastel mountain at twilight on top (the climb = the whole Winter Arc), then a soft snowy app below with tabs. Single committed pastel look. */
+:root{
+  --snow:#fbf6fb;        /* page ground */
+  --card:#ffffff;
+  --ink:#3a2f4a;         /* plum ink */
+  --ink-soft:#7d6f8e;
+  --sage:#7fb38a;        /* respecté (her legend) */
+  --sage-deep:#4f8a63;
+  --rose:#e98aa4;        /* non respecté */
+  --apricot:#f2b45c;     /* exception prévue */
+  --lilac:#b79be0;       /* accent */
+  --lilac-deep:#7d5cc0;
+  --blush:#fde3ec;
+  --mist:#f1eafa;
+  --line:#eadff2;
+  --night:#2c2452;
+  --f-display:"Fredoka","Nunito",ui-rounded,system-ui,sans-serif;
+  --f-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+  --f-body:"Nunito",ui-rounded,system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--snow);color:var(--ink)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--lilac);outline-offset:2px}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;height:clamp(340px,52vw,480px);overflow:hidden;
+  background:linear-gradient(180deg,#2c2452 0%,#5b4790 32%,#b48fcf 62%,#f5c3d6 88%,#fbe7ef 100%);
+  border-radius:0 0 34px 34px}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-ui{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;
+  padding:22px max(16px,4vw) 20px;pointer-events:none;max-width:1100px;margin:0 auto}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.brand .eyebrow{font-family:var(--f-display);letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:#f6dcf0;opacity:.9}
+.brand h1{margin:2px 0 0;font-family:var(--f-display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:1;color:#fff;
+  text-shadow:0 4px 24px rgba(255,170,210,.55);text-wrap:balance}
+.brand h1 span{font-family:var(--f-hand);font-weight:700;color:#ffd6e7;font-size:1.08em;margin-left:.15em}
+.brand .motto{font-family:var(--f-hand);font-size:21px;color:#fff3fa;margin-top:4px}
+.daypill{pointer-events:auto;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:10px 16px;color:#fff;text-align:right}
+.daypill b{font-family:var(--f-display);font-size:28px;display:block;line-height:1;font-variant-numeric:tabular-nums}
+.daypill small{opacity:.85;font-size:12px}
+.hero-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.altimeter{pointer-events:auto;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-radius:22px;padding:12px 16px;min-width:230px;box-shadow:0 10px 30px rgba(60,30,90,.18)}
+.altimeter .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.altimeter .alt{font-family:var(--f-display);font-weight:700;font-size:26px;color:var(--lilac-deep);font-variant-numeric:tabular-nums}
+.altimeter .lbl{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.bar{height:10px;border-radius:99px;background:var(--mist);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--lilac),var(--rose),var(--apricot));transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.altimeter .sub{font-size:12px;color:var(--ink-soft);margin-top:6px}
+.hint3d{font-family:var(--f-hand);color:#fff;font-size:19px;opacity:.9;text-shadow:0 2px 8px rgba(80,40,120,.4)}
+
+/* ---------- TABS ---------- */
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:0 60px}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+  margin:-26px auto 18px;padding:7px;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-radius:22px;box-shadow:0 10px 30px rgba(90,60,130,.14);width:max-content;max-width:100%}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:9px 15px;border-radius:16px;font-family:var(--f-display);font-weight:500;font-size:15px;color:var(--ink-soft);
+  transition:background .25s,color .25s,transform .2s}
+.tab:hover{color:var(--ink);transform:translateY(-1px)}
+.tab[aria-selected="true"]{background:linear-gradient(135deg,var(--lilac),var(--rose));color:#fff;box-shadow:0 6px 16px rgba(183,155,224,.5)}
+.panel{animation:rise .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{transform:translateY(10px);opacity:.4}to{transform:none;opacity:1}}
+
+h2{font-family:var(--f-display);font-weight:600;font-size:24px;margin:0;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:600;font-size:18px;margin:0}
+.hand{font-family:var(--f-hand);font-size:22px;color:var(--lilac-deep)}
+.muted{color:var(--ink-soft)}
+.box{background:var(--card);border-radius:24px;padding:18px;box-shadow:0 2px 0 var(--line),0 12px 30px rgba(120,90,160,.08)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px}
+@media (max-width:820px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:18px}
+
+/* ---------- TODAY ---------- */
+.daynav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.daynav .when{display:flex;flex-direction:column}
+.daynav .when small{font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--lilac-deep)}
+.navbtns{display:flex;gap:6px;align-items:center}
+.round{width:40px;height:40px;border-radius:50%;background:var(--mist);font-size:18px;display:grid;place-items:center;transition:transform .2s,background .2s}
+.round:hover:not(:disabled){background:var(--blush);transform:scale(1.08)}
+.round:disabled{opacity:.35;cursor:default}
+.chip{padding:8px 13px;border-radius:99px;background:var(--mist);font-weight:700;font-size:13px;transition:background .2s,transform .2s}
+.chip:hover{background:var(--blush);transform:translateY(-1px)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink-soft);margin:4px 0 14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:4px;display:inline-block}
+.dot.ok{background:var(--sage)}.dot.ko{background:var(--rose)}.dot.exc{background:var(--apricot)}
+
+.routines{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.rcard{position:relative;display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:20px;background:var(--snow);
+  border:2px solid transparent;transition:background .3s,border-color .3s,transform .25s}
+.rcard:hover{transform:translateY(-2px)}
+.rcard.ok{background:#e9f5ec;border-color:#bfe0c8}
+.rcard.ko{background:#fdebf0;border-color:#f6c5d3}
+.rcard.exc{background:#fdf2e1;border-color:#f6d9a8}
+.ricon{width:46px;height:46px;flex:0 0 46px;border-radius:15px;background:#fff;display:grid;place-items:center;font-size:24px;
+  box-shadow:0 4px 12px rgba(120,90,160,.12)}
+.rcard.ok .ricon{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.6) rotate(-12deg)}100%{transform:none}}
+.rtxt{flex:1;min-width:0}
+.rtxt b{display:block;font-family:var(--f-display);font-weight:500;font-size:15.5px;line-height:1.2}
+.rtxt small{color:var(--ink-soft);font-size:12px}
+.seg{display:flex;gap:4px}
+.seg button{width:34px;height:34px;border-radius:12px;background:#fff;font-weight:800;font-size:15px;color:var(--ink-soft);
+  box-shadow:inset 0 0 0 1.5px var(--line);transition:transform .15s,background .2s,color .2s}
+.seg button:hover{transform:scale(1.1)}
+.seg button[aria-pressed="true"].b-ok{background:var(--sage);color:#fff;box-shadow:none}
+.seg button[aria-pressed="true"].b-ko{background:var(--rose);color:#fff;box-shadow:none}
+.seg button[aria-pressed="true"].b-exc{background:var(--apricot);color:#fff;box-shadow:none}
+.flame{font-size:11px;font-weight:800;color:#d9772f}
+
+.dayfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ring{--p:0;width:64px;height:64px;border-radius:50%;flex:0 0 64px;
+  background:conic-gradient(var(--sage) calc(var(--p)*1%),var(--mist) 0);display:grid;place-items:center;transition:--p .6s}
+.ring span{width:50px;height:50px;border-radius:50%;background:#fff;display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:15px}
+.score{display:flex;align-items:center;gap:12px}
+
+.quote{background:linear-gradient(135deg,#fde3ec,#efe4fb);border-radius:24px;padding:18px 20px;position:relative;overflow:hidden}
+.quote p{font-family:var(--f-hand);font-size:27px;line-height:1.15;margin:4px 0 6px;color:var(--ink)}
+.quote .flake{position:absolute;right:-10px;top:-14px;font-size:90px;opacity:.18;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.weekmini .goal{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}
+.weekmini .goal:first-of-type{border-top:0}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dots button{width:24px;height:24px;border-radius:50%;background:var(--mist);transition:transform .2s,background .25s}
+.dots button.on{background:linear-gradient(135deg,var(--lilac),var(--rose));transform:scale(1.05)}
+.dots button:hover{transform:scale(1.18)}
+.tri{display:flex;gap:4px}
+.tri button{width:30px;height:28px;border-radius:10px;background:var(--mist);font-weight:800;font-size:13px;color:var(--ink-soft)}
+.tri button[aria-pressed="true"].b-ok{background:var(--sage);color:#fff}
+.tri button[aria-pressed="true"].b-ko{background:var(--rose);color:#fff}
+.tri button[aria-pressed="true"].b-exc{background:var(--apricot);color:#fff}
+
+/* ---------- CALENDAR ---------- */
+.months{display:flex;gap:6px;flex-wrap:wrap}
+.months .chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.calwrap{overflow-x:auto;margin-top:14px;border-radius:18px;border:1.5px solid var(--line)}
+table.cal{border-collapse:separate;border-spacing:0;font-size:12px;min-width:100%}
+.cal th,.cal td{padding:3px;text-align:center}
+.cal thead th{background:#eef5ef;font-family:var(--f-display);font-weight:500;color:var(--sage-deep);padding:8px 2px;font-variant-numeric:tabular-nums;min-width:28px}
+.cal thead th.today{background:var(--lilac);color:#fff;border-radius:10px 10px 0 0}
+.cal th.rname{position:sticky;left:0;z-index:2;background:#fff;text-align:left;white-space:nowrap;padding:4px 12px 4px 10px;
+  font-family:var(--f-display);font-weight:500;font-size:13.5px;border-right:1.5px solid var(--line)}
+.cal thead th.rname{background:#eef5ef;color:var(--sage-deep);letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+.cal tbody tr:nth-child(even) td,.cal tbody tr:nth-child(even) th.rname{background:#fcf9fd}
+.cell{width:24px;height:24px;border-radius:7px;background:#fff;box-shadow:inset 0 0 0 1.5px #d9cfe3;transition:transform .15s}
+.cell:hover{transform:scale(1.2)}
+.cell.ok{background:var(--sage);box-shadow:none}.cell.ko{background:var(--rose);box-shadow:none}.cell.exc{background:var(--apricot);box-shadow:none}
+.cell.future{opacity:.45}
+.cal tfoot td{font-weight:800;color:var(--ink-soft);font-size:11px;font-variant-numeric:tabular-nums}
+.cal tfoot th.rname{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}
+.calnote{font-size:13px;color:var(--ink-soft);margin-top:10px}
+
+/* ---------- WEEKS ---------- */
+.wk{overflow-x:auto}
+table.weeks{border-collapse:separate;border-spacing:0 8px;width:100%;min-width:560px}
+.weeks th{font-family:var(--f-display);font-weight:500;color:var(--sage-deep);font-size:14px;padding:4px}
+.weeks td{background:var(--snow);padding:10px 8px;text-align:center;vertical-align:middle}
+.weeks td:first-child{border-radius:16px 0 0 16px;text-align:left;font-family:var(--f-display);font-size:15px;padding-left:14px}
+.weeks td:last-child{border-radius:0 16px 16px 0}
+.weeks td.cur{background:#f1eafa}
+.cnt{display:inline-flex;align-items:center;gap:6px}
+.cnt button{width:26px;height:26px;border-radius:50%;background:#fff;font-weight:800;box-shadow:inset 0 0 0 1.5px var(--line)}
+.cnt b{font-family:var(--f-display);font-variant-numeric:tabular-nums;min-width:30px}
+.cnt.done b{color:var(--sage-deep)}
+.weeks .days{display:block;font-size:11px;color:var(--ink-soft);font-weight:600}
+
+/* ---------- STATS / BADGES ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--snow);border-radius:20px;padding:14px}
+.kpi b{font-family:var(--f-display);font-size:30px;font-weight:600;display:block;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12.5px;color:var(--ink-soft);font-weight:700}
+.rstats{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.rstat{display:grid;grid-template-columns:28px minmax(0,1fr) 54px;gap:10px;align-items:center}
+.rstat .lab{font-size:13.5px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.rstat .lab em{font-style:normal;color:var(--ink-soft);font-weight:600;font-size:12px}
+.rstat .pct{font-family:var(--f-display);text-align:right;font-variant-numeric:tabular-nums}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.badge{border-radius:22px;padding:14px 10px;text-align:center;background:var(--snow);position:relative;transition:transform .3s}
+.badge .medal{width:64px;height:64px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;font-size:30px;
+  background:#ece6f1;filter:grayscale(1);opacity:.55}
+.badge b{font-family:var(--f-display);font-weight:500;font-size:14px;display:block;line-height:1.2}
+.badge small{font-size:11.5px;color:var(--ink-soft);display:block;margin-top:3px}
+.badge.won{background:linear-gradient(160deg,#fff,#fbeaf2)}
+.badge.won .medal{filter:none;opacity:1;background:conic-gradient(from 200deg,#ffd9e8,#e5d6ff,#fff1c9,#ffd9e8);
+  box-shadow:0 8px 20px rgba(233,138,164,.35);animation:shine 3.5s ease-in-out infinite}
+.badge.won:hover{transform:translateY(-4px) rotate(-2deg)}
+@keyframes shine{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* ---------- COACH ---------- */
+.coach{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px}
+@media (max-width:820px){.coach{grid-template-columns:minmax(0,1fr)}}
+.chatbox{display:flex;flex-direction:column;height:min(620px,72vh);padding:0;overflow:hidden}
+.chathead{display:flex;align-items:center;gap:12px;padding:14px 18px;background:linear-gradient(135deg,#efe4fb,#fde3ec)}
+.avatar{width:48px;height:48px;border-radius:50%;flex:0 0 48px;display:grid;place-items:center;font-size:24px;
+  background:radial-gradient(circle at 35% 30%,#fff,#e5d6ff 60%,#f6bcd0);box-shadow:0 0 0 4px rgba(255,255,255,.7),0 8px 20px rgba(183,155,224,.5);
+  animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-4px)}}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:84%;padding:10px 14px;border-radius:20px;line-height:1.45;animation:rise .35s ease;white-space:normal;overflow-wrap:anywhere}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,var(--lilac),var(--rose));color:#fff;border-bottom-right-radius:6px}
+.msg.ai{align-self:flex-start;background:var(--mist);border-bottom-left-radius:6px}
+.msg.ai ul{margin:6px 0;padding-left:18px}
+.msg.sys{align-self:center;background:#fff6e6;color:#8a5a14;font-size:13px;text-align:center}
+.typing{display:inline-flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--lilac);animation:bounce 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{50%{transform:translateY(-5px);opacity:.5}}
+.suggest{display:flex;gap:6px;overflow-x:auto;padding:0 16px 8px;scrollbar-width:none}
+.suggest .chip{white-space:nowrap;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)}
+.composer{display:flex;gap:8px;padding:12px 14px;border-top:1.5px solid var(--line);align-items:flex-end}
+.composer textarea{flex:1;min-width:0;resize:none;border:1.5px solid var(--line);border-radius:18px;padding:10px 14px;font:inherit;max-height:120px;background:var(--snow);color:var(--ink)}
+.send{height:44px;padding:0 18px;border-radius:16px;background:linear-gradient(135deg,var(--lilac),var(--rose));color:#fff;font-family:var(--f-display);font-weight:600}
+.send:disabled{opacity:.5;cursor:default}
+.side ul{margin:8px 0 0;padding-left:18px;color:var(--ink-soft);font-size:13.5px}
+
+/* ---------- BILAN ---------- */
+.field{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.field label{font-family:var(--f-display);font-weight:500}
+.field textarea{border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;font:inherit;min-height:70px;resize:vertical;background:var(--snow);color:var(--ink)}
+.facts{display:flex;flex-direction:column;gap:10px}
+.fact{display:flex;gap:10px;align-items:center;background:var(--snow);border-radius:16px;padding:10px 12px}
+.fact .e{font-size:22px}
+.aiout{margin-top:12px;background:var(--mist);border-radius:16px;padding:12px 14px;font-size:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:16px;font-family:var(--f-display);font-weight:600;
+  background:linear-gradient(135deg,var(--lilac),var(--rose));color:#fff;box-shadow:0 6px 16px rgba(183,155,224,.45);transition:transform .2s}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.soft{background:var(--mist);color:var(--ink);box-shadow:none}
+
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,calc(100% + 60px));z-index:50;visibility:hidden;
+  background:var(--night);color:#fff;padding:12px 18px;border-radius:18px;font-weight:700;box-shadow:0 12px 30px rgba(40,20,80,.35);
+  transition:transform .45s cubic-bezier(.2,1.4,.4,1);max-width:calc(100% - 32px);text-align:center}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+.savestate{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:24px}
+
+@media (max-width:520px){
+  .hero{border-radius:0 0 26px 26px}
+  .altimeter{min-width:0;width:100%}
+  .hint3d{display:none}
+  .seg button{width:32px;height:32px}
+  .tab{padding:8px 11px;font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="hero">
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="hero-ui">
+    <div class="hero-top">
+      <div class="brand">
+        <div class="eyebrow">1 octobre → 31 décembre 2026</div>
+        <h1>Winter Arc <span>Pauline</span></h1>
+        <div class="motto">Discipline aujourd'hui pour la vie dont je rêve demain ♡</div>
+      </div>
+      <div class="daypill"><b id="dayNum">Jour 1</b><small id="dayLeft">sur 92</small></div>
+    </div>
+    <div class="hero-bottom">
+      <div class="altimeter">
+        <div class="row"><span class="lbl">Altitude</span><span class="alt" id="alt">0 m</span></div>
+        <div class="bar"><i id="altBar"></i></div>
+        <div class="sub" id="altSub">Chaque routine respectée te fait monter. Sommet : 3 000 m le 31 décembre.</div>
+      </div>
+      <div class="hint3d">glisse sur la montagne ✦</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="t-today" aria-selected="true" data-tab="today">Aujourd'hui</button>
+    <button class="tab" role="tab" id="t-cal" aria-selected="false" data-tab="cal">Calendrier</button>
+    <button class="tab" role="tab" id="t-week" aria-selected="false" data-tab="week">Semaines</button>
+    <button class="tab" role="tab" id="t-stats" aria-selected="false" data-tab="stats">Badges</button>
+    <button class="tab" role="tab" id="t-coach" aria-selected="false" data-tab="coach">Coach Lumi</button>
+    <button class="tab" role="tab" id="t-bilan" aria-selected="false" data-tab="bilan">Bilan</button>
+  </nav>
+
+  <!-- TODAY -->
+  <section class="panel" id="p-today">
+    <div class="grid2">
+      <div class="box">
+        <div class="daynav">
+          <div class="when"><small id="dayTag">Aujourd'hui</small><h2 id="dayTitle">—</h2></div>
+          <div class="navbtns">
+            <button class="round" id="prevDay" aria-label="Jour précédent">‹</button>
+            <button class="chip" id="goToday">Aujourd'hui</button>
+            <button class="round" id="nextDay" aria-label="Jour suivant">›</button>
+          </div>
+        </div>
+        <div class="legend">
+          <span><i class="dot ok"></i>✓ respecté</span><span><i class="dot ko"></i>✗ non respecté</span><span><i class="dot exc"></i>★ exception prévue</span>
+        </div>
+        <div class="routines" id="routines"></div>
+        <div class="dayfoot">
+          <div class="score"><div class="ring" id="ring"><span id="ringTxt">0/9</span></div>
+            <div><b id="scoreTitle" style="font-family:var(--f-display);font-weight:600">Ta journée commence</b><div class="muted" style="font-size:13px" id="scoreSub">Coche tes routines au fil de la journée.</div></div></div>
+          <button class="chip" id="excDay" title="Noël, anniversaire, repas de famille…">★ Journée exception</button>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="quote"><span class="flake">❄</span><span class="muted" style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Mot du jour</span><p id="quote">Petits pas, grands résultats.</p></div>
+        <div class="box weekmini">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><h3>Cette semaine</h3><span class="hand" id="wkLabel">S1</span></div>
+          <div id="weekMini"></div>
+        </div>
+        <div class="box">
+          <h3>Tes séries en cours</h3>
+          <div id="streaks" class="rstats" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section class="panel" id="p-cal" hidden>
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2>Mes routines quotidiennes</h2>
+        <div class="months" id="calMonths"></div>
+      </div>
+      <div class="calwrap"><table class="cal" id="calTable"></table></div>
+      <p class="calnote">Touche une case pour la faire passer de vide à ✓, puis ✗, puis ★. Les occasions spéciales (Noël, anniversaires, repas de famille…) sont des exceptions prévues et ne comptent pas comme un échec.</p>
+    </div>
+  </section>
+
+  <!-- WEEKS -->
+  <section class="panel" id="p-week" hidden>
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2>Mes objectifs hebdomadaires</h2>
+        <div class="months" id="wkMonths"></div>
+      </div>
+      <div class="wk" style="margin-top:10px"><table class="weeks" id="wkTable"></table></div>
+      <p class="calnote">Sport et souplesse : ajoute une séance avec +. L'objectif se valide tout seul à 5 et à 3 séances.</p>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="panel" id="p-stats" hidden>
+    <div class="stack">
+      <div class="kpis" id="kpis"></div>
+      <div class="grid2">
+        <div class="box"><h3>Mes badges d'hiver</h3><p class="muted" style="margin:4px 0 14px;font-size:13.5px">Ils se débloquent tout seuls quand tu avances.</p><div class="badges" id="badges"></div></div>
+        <div class="box"><h3>Taux de réussite</h3><p class="muted" style="margin:4px 0 10px;font-size:13.5px">Depuis le 1er octobre, exceptions mises à part.</p><div class="rstats" id="rates"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COACH -->
+  <section class="panel" id="p-coach" hidden>
+    <div class="coach">
+      <div class="box chatbox">
+        <div class="chathead"><div class="avatar">❄️</div><div><h3>Lumi</h3><div class="muted" style="font-size:13px">Ta coach Winter Arc. Elle voit tes routines et tes séries.</div></div>
+          <button class="chip" id="clearChat" style="margin-left:auto">Effacer</button></div>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <div class="suggest" id="suggest"></div>
+        <form class="composer" id="composer">
+          <textarea id="chatInput" rows="1" placeholder="Écris à Lumi…" aria-label="Message pour Lumi"></textarea>
+          <button class="send" id="sendBtn" type="submit">Envoyer</button>
+        </form>
+      </div>
+      <div class="box side">
+        <h3>Ce que Lumi sait faire</h3>
+        <ul>
+          <li>Te motiver quand c'est dur</li>
+          <li>T'aider à rebondir après un jour raté</li>
+          <li>Te proposer des séances de sport ou de souplesse</li>
+          <li>Des idées de repas équilibrés et de petits plaisirs</li>
+          <li>Faire le point sur ta semaine</li>
+        </ul>
+        <p class="muted" style="font-size:12.5px;margin-top:14px">Lumi utilise ton compte Claude. La première fois, Claude te demande l'autorisation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILAN -->
+  <section class="panel" id="p-bilan" hidden>
+    <div class="grid2">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <h2>Bilan du mois</h2><div class="months" id="bilMonths"></div>
+        </div>
+        <div class="field"><label for="b-best">Meilleure semaine</label><textarea id="b-best"></textarea></div>
+        <div class="field"><label for="b-hard">Le plus difficile</label><textarea id="b-hard"></textarea></div>
+        <div class="field"><label for="b-proud">Je suis fière de…</label><textarea id="b-proud"></textarea></div>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <button class="btn" id="bilanAI">✨ Lumi m'aide à écrire</button>
+        </div>
+        <div class="aiout" id="bilanOut" hidden></div>
+      </div>
+      <div class="box">
+        <h3>Ce que disent tes chiffres</h3>
+        <div class="facts" id="facts" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="savestate" id="saveState">Tes données sont gardées sur cet appareil.</p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+<script>
+(() => {
+/* ================= DATA ================= */
+const ROUTINES = [
+  {id:'pas',     icon:'👟', label:'8 000 pas min',        hint:'Bouge, marche, danse'},
+  {id:'eau',     icon:'💧', label:'2 L d\'eau',            hint:'8 grands verres'},
+  {id:'seuleau', icon:'🫖', label:'Seulement de l\'eau',   hint:'Pas de soda ni de jus'},
+  {id:'grignot', icon:'🍪', label:'0 grignotage',          hint:'Entre les repas'},
+  {id:'sommeil', icon:'🌙', label:'Sommeil 7 h 30 à 9 h',  hint:'Écran off avant'},
+  {id:'lecture', icon:'📖', label:'Lecture 10–15 min',     hint:'Une page à la fois'},
+  {id:'priere',  icon:'🙏', label:'Prière du soir',        hint:'Un moment pour toi'},
+  {id:'anglais', icon:'🎓', label:'Anglais 10 min',        hint:'Little by little'},
+  {id:'cinq',    icon:'⏱️', label:'Règle des 5 min',       hint:'Commence, juste 5 min'}
+];
+const GOALS = [
+  {id:'sport',  icon:'🏋️', label:'5 séances de sport',  target:5},
+  {id:'flex',   icon:'🪷', label:'3 séances de souplesse', target:3},
+  {id:'alim',   icon:'🥗', label:'Alimentation équilibrée'},
+  {id:'plaisir',icon:'🧁', label:'1 seul plaisir (sucré ou fast-food)'}
+];
+const MONTHS = [{m:9,name:'Octobre',days:31},{m:10,name:'Novembre',days:30},{m:11,name:'Décembre',days:31}];
+const YEAR = 2026, TOTAL = 92, SUMMIT = 3000;
+const QUOTES = [
+  "Petits pas, grands résultats.","Tout commence par une décision.","Une meilleure version de moi, chaque jour.",
+  "Discipline aujourd'hui pour la vie dont je rêve demain.","Tu n'as pas besoin d'être parfaite, juste constante.",
+  "Cinq minutes suffisent pour commencer.","Le sommet se gagne pas à pas.","Une journée ratée n'efface pas tes progrès.",
+  "Tu fais ça pour la Pauline du 31 décembre.","Doucement, mais sûrement.","Ton futur toi te remercie déjà.",
+  "La neige tombe flocon par flocon. Tes habitudes aussi.","Fière de chaque case cochée.","Calme, forte, régulière."
+];
+const DOW = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const pad = n => String(n).padStart(2,'0');
+const keyOf = (m,d) => `${YEAR}-${pad(m+1)}-${pad(d)}`;
+const START = new Date(YEAR,9,1), END = new Date(YEAR,11,31);
+function clampDate(d){ return d < START ? new Date(START) : d > END ? new Date(END) : d; }
+const now = new Date(); const REAL_TODAY = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+const TODAY = clampDate(REAL_TODAY);
+const dayIndex = d => Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate()) - START)/864e5); // 0..91
+const keyD = d => keyOf(d.getMonth(), d.getDate());
+const allDays = []; for(let i=0;i<TOTAL;i++){ const d=new Date(YEAR,9,1+i); allDays.push(d); }
+const isFuture = d => d > REAL_TODAY;
+const weekOf = day => Math.min(5, Math.floor((day-1)/7)+1);
+const weekKey = (m,w) => `${YEAR}-${pad(m+1)}-S${w}`;
+
+let state = { days:{}, weeks:{}, bilans:{}, v:1 };
+let chat = [];
+
+/* ================= STORAGE ================= */
+const LS = 'winterArcPauline.v1', LSCHAT = 'winterArcPauline.chat';
+try { const s = JSON.parse(localStorage.getItem(LS)||'null'); if (s && s.days) state = s; } catch(e){}
+try { chat = JSON.parse(localStorage.getItem(LSCHAT)||'[]') || []; } catch(e){ chat = []; }
+let dbRef = null, writing = false, pending = false, saveTimer = null;
+function save(){
+  try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e){}
+  if (!dbRef) return;
+  clearTimeout(saveTimer); saveTimer = setTimeout(flush, 700);
+}
+async function flush(){
+  if (!dbRef) return;
+  if (writing){ pending = true; return; }
+  writing = true;
+  try { await dbRef.set(JSON.parse(JSON.stringify(state))); setSaved('Synchronisé avec ton compte ✓'); }
+  catch(e){ setSaved('Sauvegardé sur cet appareil (synchro indisponible)'); }
+  writing = false;
+  if (pending){ pending = false; flush(); }
+}
+function setSaved(t){ document.getElementById('saveState').textContent = t; }
+function saveChat(){ try { localStorage.setItem(LSCHAT, JSON.stringify(chat.slice(-30))); } catch(e){} }
+
+async function connect(){
+  if (!window.claude || !claude.use) return;
+  try {
+    const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
+    if (!db || !user) return;
+    const uid = await user.id();
+    if (!uid) return;
+    dbRef = db.doc('data/users/' + uid + '/winterarc');
+    const snap = await dbRef.get();
+    if (snap.exists && snap.data() && snap.data().days){
+      state = JSON.parse(JSON.stringify(snap.data()));
+      try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e){}
+      renderAll();
+      setSaved('Synchronisé avec ton compte ✓');
+    } else if (Object.keys(state.days).length){
+      flush();
+    } else setSaved('Synchronisé avec ton compte ✓');
+  } catch(e){ dbRef = null; }
+}
+
+/* ================= HELPERS ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function get(k, r){ return (state.days[k]||{})[r]; }
+function setStatus(k, r, v){
+  state.days[k] = state.days[k] || {};
+  if (v) state.days[k][r] = v; else delete state.days[k][r];
+  if (!Object.keys(state.days[k]).length) delete state.days[k];
+}
+const cycle = v => v===undefined ? 'ok' : v==='ok' ? 'ko' : v==='ko' ? 'exc' : undefined;
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2600); }
+function boom(big){
+  if (!window.confetti || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors=['#b79be0','#e98aa4','#f2b45c','#7fb38a','#ffffff','#ffd6e7'];
+  confetti({particleCount: big?160:60, spread: big?100:60, origin:{y:.7}, colors, scalar: big?1.1:.9, shapes:['circle','square']});
+  if (big) setTimeout(()=>confetti({particleCount:80,angle:60,spread:70,origin:{x:0,y:.8},colors}),200),
+           setTimeout(()=>confetti({particleCount:80,angle:120,spread:70,origin:{x:1,y:.8},colors}),350);
+}
+
+function dayStats(k){
+  const d = state.days[k]||{}; let ok=0,ko=0,exc=0;
+  ROUTINES.forEach(r=>{ if(d[r.id]==='ok')ok++; else if(d[r.id]==='ko')ko++; else if(d[r.id]==='exc')exc++; });
+  return {ok,ko,exc,set:ok+ko+exc,perfect: ok>0 && ok+exc===ROUTINES.length};
+}
+function progress(){
+  let pts=0; for(const k in state.days){ const s=dayStats(k); pts += s.ok + s.exc; }
+  return Math.min(1, pts/(ROUTINES.length*TOTAL));
+}
+function streak(rid){
+  // consecutive respected days ending today (today counted if done; exceptions don't break it)
+  let n=0; let i=dayIndex(TODAY);
+  if (get(keyD(allDays[i]),rid)===undefined) i--;
+  for(; i>=0; i--){ const v=get(keyD(allDays[i]),rid); if(v==='ok') n++; else if(v==='exc') continue; else break; }
+  return n;
+}
+function bestStreak(rid){
+  let best=0,cur=0; for(const d of allDays){ const v=get(keyD(d),rid); if(v==='ok'){cur++;best=Math.max(best,cur);} else if(v==='exc'){} else cur=0; } return best;
+}
+function rate(rid, filter){
+  let ok=0,ko=0; for(const d of allDays){ if(filter && !filter(d)) continue; const v=get(keyD(d),rid); if(v==='ok')ok++; else if(v==='ko')ko++; }
+  return {ok,ko,pct: ok+ko ? Math.round(ok*100/(ok+ko)) : null};
+}
+function countOk(rid){ let n=0; for(const k in state.days) if(state.days[k][rid]==='ok') n++; return n; }
+function perfectDays(){ let n=0; for(const k in state.days) if(dayStats(k).perfect) n++; return n; }
+function weekGoalsDone(id){ let n=0; for(const k in state.weeks){ const w=state.weeks[k], g=GOALS.find(x=>x.id===id); const v=w[id]; if(g.target? v>=g.target : v==='ok') n++; } return n; }
+function bestDayStreak(){ let best=0,cur=0; for(const d of allDays){ const s=dayStats(keyD(d)); if(s.perfect){cur++;best=Math.max(best,cur);} else cur=0; } return best; }
+
+/* ================= HERO ================= */
+function renderHero(){
+  const i = dayIndex(TODAY)+1;
+  $('dayNum').textContent = 'Jour ' + i;
+  $('dayLeft').textContent = REAL_TODAY > END ? 'Winter Arc terminé ♡' : REAL_TODAY < START ? 'Départ le 1er octobre' : `sur 92 · encore ${TOTAL-i} jours`;
+  const p = progress();
+  $('alt').textContent = Math.round(p*SUMMIT).toLocaleString('fr-FR') + ' m';
+  $('altBar').style.width = (p*100).toFixed(1)+'%';
+  const ideal = i/TOTAL;
+  $('altSub').textContent = p >= ideal*0.85 ? 'Tu es pile sur le chemin du sommet. Continue comme ça ✦' :
+    'Chaque routine respectée te fait monter. Sommet : 3 000 m le 31 décembre.';
+  if (window.__setClimb) window.__setClimb(p);
+}
+
+/* ================= TODAY ================= */
+let viewDate = new Date(TODAY);
+function renderToday(){
+  const k = keyD(viewDate);
+  const isT = keyD(viewDate)===keyD(REAL_TODAY);
+  $('dayTag').textContent = isT ? "Aujourd'hui" : isFuture(viewDate) ? 'À venir' : 'Jour ' + (dayIndex(viewDate)+1);
+  $('dayTitle').textContent = `${DOW[viewDate.getDay()][0].toUpperCase()+DOW[viewDate.getDay()].slice(1)} ${viewDate.getDate()} ${MONTHS.find(m=>m.m===viewDate.getMonth()).name.toLowerCase()}`;
+  $('prevDay').disabled = dayIndex(viewDate)<=0; $('nextDay').disabled = dayIndex(viewDate)>=TOTAL-1;
+  const wrap = $('routines'); wrap.innerHTML='';
+  ROUTINES.forEach(r=>{
+    const v = get(k,r.id); const st = streak(r.id);
+    const el = document.createElement('div'); el.className = 'rcard ' + (v||'');
+    el.innerHTML = `<div class="ricon">${r.icon}</div>
+      <div class="rtxt"><b>${esc(r.label)}</b><small>${st>=2 ? `<span class="flame">🔥 ${st} jours d'affilée</span>` : esc(r.hint)}</small></div>
+      <div class="seg" role="group" aria-label="${esc(r.label)}">
+        <button class="b-ok" aria-pressed="${v==='ok'}" aria-label="Respecté" title="Respecté">✓</button>
+        <button class="b-ko" aria-pressed="${v==='ko'}" aria-label="Non respecté" title="Non respecté">✗</button>
+        <button class="b-exc" aria-pressed="${v==='exc'}" aria-label="Exception prévue" title="Exception prévue">★</button>
+      </div>`;
+    const [bo,bk,be] = el.querySelectorAll('.seg button');
+    const set = val => () => {
+      const before = dayStats(k).perfect;
+      setStatus(k, r.id, get(k,r.id)===val ? undefined : val);
+      save(); renderToday(); renderHero(); renderStreaks();
+      const after = dayStats(k).perfect;
+      if (val==='ok' && get(k,r.id)==='ok'){
+        if (!before && after){ boom(true); toast('Journée parfaite ! Tu brilles ✨'); }
+        else { boom(false); }
+      }
+      checkBadges();
+    };
+    bo.onclick=set('ok'); bk.onclick=set('ko'); be.onclick=set('exc');
+    wrap.appendChild(el);
+  });
+  const s = dayStats(k);
+  $('ring').style.setProperty('--p', Math.round((s.ok+s.exc)*100/ROUTINES.length));
+  $('ring').style.background = `conic-gradient(var(--sage) ${Math.round(s.ok*100/9)}%, var(--apricot) 0 ${Math.round((s.ok+s.exc)*100/9)}%, var(--mist) 0)`;
+  $('ringTxt').textContent = `${s.ok+s.exc}/9`;
+  $('scoreTitle').textContent = s.perfect ? 'Journée parfaite ♡' : s.ok>=6 ? 'Super journée !' : s.set ? 'Ça avance' : 'Ta journée commence';
+  $('scoreSub').textContent = s.perfect ? 'Toutes tes routines sont faites. Fière de toi.' :
+    s.ko ? `${s.ko} raté${s.ko>1?'s':''} : ce n'est pas grave, demain on repart.` : 'Coche tes routines au fil de la journée.';
+  const qi = (dayIndex(viewDate)*7 + 3) % QUOTES.length; $('quote').textContent = QUOTES[qi];
+  renderWeekMini();
+}
+$('prevDay').onclick=()=>{ viewDate.setDate(viewDate.getDate()-1); renderToday(); };
+$('nextDay').onclick=()=>{ viewDate.setDate(viewDate.getDate()+1); renderToday(); };
+$('goToday').onclick=()=>{ viewDate=new Date(TODAY); renderToday(); };
+$('excDay').onclick=()=>{
+  const k=keyD(viewDate); let n=0;
+  ROUTINES.forEach(r=>{ if(get(k,r.id)===undefined || get(k,r.id)==='ko'){ setStatus(k,r.id,'exc'); n++; } });
+  save(); renderToday(); renderHero();
+  toast(n ? 'Journée exception ★ Profite, ça ne compte pas comme un échec.' : 'Tout est déjà rempli pour ce jour.');
+};
+
+function goalCell(m, w, g, compact){
+  const wk = weekKey(m,w); const val = (state.weeks[wk]||{})[g.id];
+  const box = document.createElement('div');
+  const commit = (v) => {
+    state.weeks[wk] = state.weeks[wk]||{};
+    const was = g.target ? (state.weeks[wk][g.id]||0)>=g.target : state.weeks[wk][g.id]==='ok';
+    if (v===undefined) delete state.weeks[wk][g.id]; else state.weeks[wk][g.id]=v;
+    const now = g.target ? (v||0)>=g.target : v==='ok';
+    save(); renderWeekMini(); renderWeeks(); checkBadges();
+    if (!was && now){ boom(true); toast(g.target ? `Objectif ${g.label.toLowerCase()} atteint 🎉` : 'Objectif de la semaine validé ✓'); }
+  };
+  if (g.target){
+    const n = val||0;
+    if (compact){
+      box.className='dots';
+      for(let i=1;i<=g.target;i++){ const b=document.createElement('button'); b.className = i<=n?'on':''; b.setAttribute('aria-label',`${i} séance${i>1?'s':''}`);
+        b.onclick=()=>commit(n===i ? i-1 : i); box.appendChild(b); }
+    } else {
+      box.className='cnt'+(n>=g.target?' done':'');
+      box.innerHTML=`<button aria-label="Retirer une séance">−</button><b>${n}/${g.target}</b><button aria-label="Ajouter une séance">+</button>`;
+      const [mi,pl]=box.querySelectorAll('button');
+      mi.onclick=()=>commit(Math.max(0,n-1)||undefined); pl.onclick=()=>commit(Math.min(14,n+1));
+    }
+  } else {
+    box.className='tri';
+    [['ok','✓','Respecté'],['ko','✗','Non respecté'],['exc','★','Exception prévue']].forEach(([s,t,l])=>{
+      const b=document.createElement('button'); b.className='b-'+s; b.textContent=t; b.setAttribute('aria-label',l); b.title=l;
+      b.setAttribute('aria-pressed', val===s); b.onclick=()=>commit(val===s?undefined:s); box.appendChild(b);
+    });
+  }
+  return box;
+}
+function renderWeekMini(){
+  const m = viewDate.getMonth(), w = weekOf(viewDate.getDate());
+  $('wkLabel').textContent = `${MONTHS.find(x=>x.m===m).name} · S${w}`;
+  const wrap = $('weekMini'); wrap.innerHTML='';
+  GOALS.forEach(g=>{
+    const row=document.createElement('div'); row.className='goal';
+    row.innerHTML=`<span style="font-size:14px;font-weight:700;min-width:0">${g.icon} ${esc(g.label)}</span>`;
+    row.appendChild(goalCell(m,w,g,true)); wrap.appendChild(row);
+  });
+}
+function renderStreaks(){
+  const wrap=$('streaks'); wrap.innerHTML='';
+  const list = ROUTINES.map(r=>({r,s:streak(r.id)})).sort((a,b)=>b.s-a.s).slice(0,4);
+  list.forEach(({r,s})=>{
+    const pct=Math.min(100,s*100/21);
+    const el=document.createElement('div'); el.className='rstat';
+    el.innerHTML=`<span style="font-size:20px">${r.icon}</span><div><div class="lab">${esc(r.label)}<em>${s ? '🔥 '+s+' j' : '—'}</em></div><div class="bar" style="margin-top:4px"><i style="width:${pct}%"></i></div></div><span class="pct">${s}</span>`;
+    wrap.appendChild(el);
+  });
+}
+
+/* ================= CALENDAR ================= */
+let calMonth = TODAY.getMonth();
+function monthChips(id, cur, onPick){
+  const w=$(id); w.innerHTML='';
+  MONTHS.forEach(M=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=M.name; b.setAttribute('aria-pressed',M.m===cur);
+    b.onclick=()=>onPick(M.m); w.appendChild(b); });
+}
+function renderCal(){
+  monthChips('calMonths', calMonth, m=>{calMonth=m; renderCal();});
+  const M = MONTHS.find(x=>x.m===calMonth); const t=$('calTable');
+  const todayK = keyD(REAL_TODAY);
+  let h = '<thead><tr><th class="rname">Routines ♡</th>';
+  for(let d=1; d<=M.days; d++) h += `<th class="${keyOf(calMonth,d)===todayK?'today':''}">${d}</th>`;
+  h += '</tr></thead><tbody>';
+  ROUTINES.forEach(r=>{
+    h += `<tr><th class="rname" scope="row">${r.icon} ${esc(r.label)}</th>`;
+    for(let d=1; d<=M.days; d++){ const k=keyOf(calMonth,d), v=get(k,r.id), fut = new Date(YEAR,calMonth,d) > REAL_TODAY;
+      h += `<td><button class="cell ${v||''} ${fut&&!v?'future':''}" data-k="${k}" data-r="${r.id}" aria-label="${esc(r.label)}, ${d} ${M.name}: ${v==='ok'?'respecté':v==='ko'?'non respecté':v==='exc'?'exception':'vide'}"></button></td>`; }
+    h += '</tr>';
+  });
+  h += '</tbody><tfoot><tr><th class="rname">Score</th>';
+  for(let d=1; d<=M.days; d++){ const s=dayStats(keyOf(calMonth,d)); h += `<td>${s.set? (s.perfect?'♡':s.ok) : ''}</td>`; }
+  h += '</tr></tfoot>';
+  t.innerHTML = h;
+  t.querySelectorAll('.cell').forEach(c=>c.onclick=()=>{
+    const k=c.dataset.k, r=c.dataset.r; setStatus(k,r,cycle(get(k,r))); save(); renderCal(); renderHero(); checkBadges();
+  });
+}
+
+/* ================= WEEKS ================= */
+let wkMonth = TODAY.getMonth();
+function renderWeeks(){
+  monthChips('wkMonths', wkMonth, m=>{wkMonth=m; renderWeeks();});
+  const M = MONTHS.find(x=>x.m===wkMonth); const t=$('wkTable'); t.innerHTML='';
+  const nW = weekOf(M.days);
+  const curW = TODAY.getMonth()===wkMonth ? weekOf(TODAY.getDate()) : 0;
+  const thead=document.createElement('thead'); let hr='<tr><th></th>';
+  for(let w=1;w<=nW;w++){ const a=(w-1)*7+1, b=Math.min(M.days,w*7); hr+=`<th>S${w}<span class="days">${a}–${b}</span></th>`; }
+  thead.innerHTML=hr+'</tr>'; t.appendChild(thead);
+  const tb=document.createElement('tbody');
+  GOALS.forEach(g=>{
+    const tr=document.createElement('tr'); const td0=document.createElement('td'); td0.textContent=`${g.icon}  ${g.label}`; tr.appendChild(td0);
+    for(let w=1;w<=nW;w++){ const td=document.createElement('td'); if(w===curW) td.className='cur'; const c=goalCell(wkMonth,w,g,false); c.style.justifyContent='center'; td.appendChild(c); tr.appendChild(td); }
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+}
+
+/* ================= BADGES & STATS ================= */
+const BADGES = [
+  {id:'first',  e:'🌱', n:'Premier pas',          d:'Ta première routine cochée', ok:()=>Object.keys(state.days).length>0},
+  {id:'perfect',e:'💎', n:'Journée parfaite',     d:'Les 9 routines en un jour',  ok:()=>perfectDays()>=1},
+  {id:'p7',     e:'👑', n:'Reine de la semaine',  d:'7 journées parfaites',       ok:()=>perfectDays()>=7},
+  {id:'s7',     e:'🔥', n:'Flamme d\'hiver',       d:'7 jours d\'affilée sur une routine', ok:()=>ROUTINES.some(r=>bestStreak(r.id)>=7)},
+  {id:'s21',    e:'🦢', n:'Habitude ancrée',      d:'21 jours d\'affilée',        ok:()=>ROUTINES.some(r=>bestStreak(r.id)>=21)},
+  {id:'eau',    e:'🧊', n:'Hydratée',             d:'30 jours à 2 L d\'eau',      ok:()=>countOk('eau')>=30},
+  {id:'lect',   e:'📚', n:'Rat de bibliothèque',  d:'30 jours de lecture',        ok:()=>countOk('lecture')>=30},
+  {id:'eng',    e:'🇬🇧', n:'English girl',        d:'30 jours d\'anglais',        ok:()=>countOk('anglais')>=30},
+  {id:'pri',    e:'🕊️', n:'Âme sereine',          d:'30 prières du soir',         ok:()=>countOk('priere')>=30},
+  {id:'sleep',  e:'🌙', n:'Belle au bois dormant',d:'30 nuits de 7 h 30 à 9 h',   ok:()=>countOk('sommeil')>=30},
+  {id:'sport',  e:'💪', n:'Sportive',             d:'4 semaines à 5 séances',     ok:()=>weekGoalsDone('sport')>=4},
+  {id:'flex',   e:'🐈', n:'Souple comme un chat', d:'4 semaines à 3 séances',     ok:()=>weekGoalsDone('flex')>=4},
+  {id:'half',   e:'⛺', n:'Camp de base',         d:'1 500 m d\'altitude',        ok:()=>progress()>=.5},
+  {id:'summit', e:'🏔️', n:'Le sommet',            d:'3 000 m : Winter Arc réussi',ok:()=>progress()>=.9}
+];
+let wonBefore = null;
+function checkBadges(){
+  const won = BADGES.filter(b=>b.ok()).map(b=>b.id);
+  if (wonBefore){ const fresh = won.filter(id=>!wonBefore.includes(id)); if (fresh.length){ const b=BADGES.find(x=>x.id===fresh[0]); setTimeout(()=>{ toast(`Nouveau badge : ${b.e} ${b.n}`); boom(true); },500); } }
+  wonBefore = won;
+  if (!$('p-stats').hidden) renderStats();
+}
+function renderStats(){
+  const pts = Math.round(progress()*SUMMIT);
+  let okAll=0,koAll=0; for(const k in state.days){ const s=dayStats(k); okAll+=s.ok; koAll+=s.ko; }
+  const best = Math.max(0,...ROUTINES.map(r=>bestStreak(r.id)));
+  $('kpis').innerHTML = [
+    [pts.toLocaleString('fr-FR')+' m','altitude atteinte'],
+    [perfectDays(),'journées parfaites'],
+    [best+' j','meilleure série'],
+    [okAll+koAll? Math.round(okAll*100/(okAll+koAll))+' %':'—','de routines respectées']
+  ].map(([v,l])=>`<div class="kpi"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('badges').innerHTML = BADGES.map(b=>{ const w=b.ok(); return `<div class="badge ${w?'won':''}"><div class="medal">${b.e}</div><b>${esc(b.n)}</b><small>${w?'Débloqué ♡':esc(b.d)}</small></div>`; }).join('');
+  $('rates').innerHTML = ROUTINES.map(r=>{ const x=rate(r.id); const p=x.pct??0;
+    return `<div class="rstat"><span style="font-size:20px">${r.icon}</span><div><div class="lab">${esc(r.label)}<em>${x.ok} ✓ · ${x.ko} ✗</em></div><div class="bar" style="margin-top:4px"><i style="width:${p}%"></i></div></div><span class="pct">${x.pct===null?'—':p+' %'}</span></div>`; }).join('');
+}
+
+/* ================= BILAN ================= */
+let bilMonth = TODAY.getMonth();
+function monthFacts(m){
+  const M=MONTHS.find(x=>x.m===m); const inM = d=>d.getMonth()===m;
+  const weeks=[]; for(let w=1;w<=weekOf(M.days);w++){ let ok=0,ko=0; for(let d=(w-1)*7+1; d<=Math.min(M.days,w*7); d++){ const s=dayStats(keyOf(m,d)); ok+=s.ok; ko+=s.ko; } weeks.push({w,ok,ko,pct: ok+ko? Math.round(ok*100/(ok+ko)) : null}); }
+  const rated = weeks.filter(w=>w.pct!==null);
+  const bestW = rated.sort((a,b)=>b.pct-a.pct||b.ok-a.ok)[0];
+  const rr = ROUTINES.map(r=>({r,...rate(r.id,inM)})).filter(x=>x.pct!==null);
+  const hard = [...rr].sort((a,b)=>a.pct-b.pct)[0];
+  const top = [...rr].sort((a,b)=>b.pct-a.pct)[0];
+  let perfect=0; for(let d=1; d<=M.days; d++) if(dayStats(keyOf(m,d)).perfect) perfect++;
+  return {M,bestW,hard,top,perfect,weeks};
+}
+function renderBilan(){
+  monthChips('bilMonths', bilMonth, m=>{bilMonth=m; $('bilanOut').hidden=true; renderBilan();});
+  const k = `${YEAR}-${pad(bilMonth+1)}`; const b = state.bilans[k]||{};
+  $('b-best').value=b.best||''; $('b-hard').value=b.hard||''; $('b-proud').value=b.proud||'';
+  const f = monthFacts(bilMonth);
+  const items = [];
+  items.push(['🏆', f.bestW ? `Ta meilleure semaine pour l'instant : <b>S${f.bestW.w}</b> avec ${f.bestW.pct} % de routines respectées.` : 'Pas encore de semaine remplie ce mois-ci.']);
+  if (f.top) items.push(['🌟', `Ta routine la plus solide : <b>${esc(f.top.r.label)}</b> (${f.top.pct} %).`]);
+  if (f.hard && f.hard!==f.top) items.push(['🧗‍♀️', `La plus difficile : <b>${esc(f.hard.r.label)}</b> (${f.hard.pct} %).`]);
+  items.push(['💎', `<b>${f.perfect}</b> journée${f.perfect>1?'s':''} parfaite${f.perfect>1?'s':''} en ${f.M.name.toLowerCase()}.`]);
+  $('facts').innerHTML = items.map(([e,t])=>`<div class="fact"><span class="e">${e}</span><span>${t}</span></div>`).join('');
+}
+['best','hard','proud'].forEach(f=>{ $('b-'+f).addEventListener('input', e=>{ const k=`${YEAR}-${pad(bilMonth+1)}`; state.bilans[k]=state.bilans[k]||{}; state.bilans[k][f]=e.target.value; save(); }); });
+
+/* ================= COACH (Claude) ================= */
+let sample = null, busy = false, ctl = null;
+function context(){
+  const t = TODAY, k=keyD(t), i=dayIndex(t)+1;
+  const lines = [];
+  lines.push(`Date : ${DOW[t.getDay()]} ${t.getDate()} ${MONTHS.find(m=>m.m===t.getMonth()).name.toLowerCase()} 2026 (jour ${i}/92). Altitude : ${Math.round(progress()*SUMMIT)} m sur 3000.`);
+  lines.push(`Journées parfaites : ${perfectDays()}.`);
+  lines.push('Routines (statut aujourd\'hui | série actuelle | taux de réussite) :');
+  ROUTINES.forEach(r=>{ const v=get(k,r.id); const x=rate(r.id); lines.push(`- ${r.label} : ${v==='ok'?'fait':v==='ko'?'raté':v==='exc'?'exception':'pas encore coché'} | ${streak(r.id)} j | ${x.pct===null?'pas de données':x.pct+' %'}`); });
+  const m=t.getMonth(), w=weekOf(t.getDate()), wk=state.weeks[weekKey(m,w)]||{};
+  lines.push(`Objectifs de la semaine en cours (S${w}) : sport ${wk.sport||0}/5, souplesse ${wk.flex||0}/3, alimentation équilibrée ${wk.alim||'non noté'}, 1 seul plaisir ${wk.plaisir||'non noté'}.`);
+  lines.push('7 derniers jours (✓ respectées / ✗ ratées / ★ exceptions) :');
+  for(let j=Math.max(0,i-7); j<i; j++){ const d=allDays[j], s=dayStats(keyD(d)); lines.push(`- ${d.getDate()}/${d.getMonth()+1} : ${s.ok}✓ ${s.ko}✗ ${s.exc}★`); }
+  const won = BADGES.filter(b=>b.ok()).map(b=>b.n); lines.push('Badges : ' + (won.join(', ')||'aucun pour l\'instant'));
+  return lines.join('\n');
+}
+function rules(){
+  return `Tu es Lumi, la coach IA du Winter Arc de Pauline (du 1er octobre au 31 décembre 2026). Tu réponds en français, tu tutoies Pauline. Ton ton : chaleureux, pétillant, doux et motivant, comme une grande sœur bienveillante, jamais niais. Réponses courtes : 2 à 7 phrases, ou une petite liste quand c'est utile. Deux emoji au maximum. Pas de titres markdown ; tu peux utiliser **gras** et des listes "- ".
+Règles du Winter Arc : chaque jour une routine est respectée, non respectée ou "exception prévue". Les occasions spéciales (Noël, anniversaires, repas de famille…) sont des exceptions prévues et ne comptent jamais comme un échec. Ne culpabilise jamais Pauline ; après un raté, propose une petite action concrète pour repartir (par exemple la règle des 5 min). Respecte sa foi (prière du soir) avec délicatesse. Pas de conseils médicaux ni de régime extrême : alimentation équilibrée et plaisir assumé ; si une question touche la santé, suggère de voir un professionnel.
+Routines quotidiennes : ${ROUTINES.map(r=>r.label).join(' ; ')}.
+Objectifs hebdomadaires : 5 séances de sport, 3 séances de souplesse, alimentation équilibrée, 1 seul plaisir par semaine (sucré ou fast-food).
+Données actuelles de Pauline :
+${context()}
+Utilise ces données quand c'est pertinent (félicite les séries, repère ce qui coince), sans tout réciter.`;
+}
+function md(s){
+  const lines = esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split('\n'); let out='', inList=false;
+  lines.forEach(l=>{ const m=l.match(/^\s*[-•*]\s+(.*)/); if(m){ if(!inList){out+='<ul>';inList=true;} out+=`<li>${m[1]}</li>`; } else { if(inList){out+='</ul>';inList=false;} if(l.trim()) out+=`<div>${l}</div>`; else out+='<div style="height:6px"></div>'; } });
+  if(inList) out+='</ul>'; return out;
+}
+function addMsg(role, html){ const el=document.createElement('div'); el.className='msg '+role; el.innerHTML=html; $('msgs').appendChild(el); $('msgs').scrollTop=1e9; return el; }
+function renderChat(){
+  $('msgs').innerHTML='';
+  addMsg('ai', md("Coucou Pauline ❄️ Moi c'est Lumi, ta coach pour ce Winter Arc. Je vois tes routines et tes séries. Dis-moi comment tu te sens aujourd'hui, ou choisis une idée en dessous."));
+  chat.forEach(m=>addMsg(m.role==='user'?'me':'ai', m.role==='user'? esc(m.content).replace(/\n/g,'<br>') : md(m.content)));
+  if (!sample) addMsg('sys', "Lumi se réveille quand tu ouvres cette page dans Claude. Si elle ne répond pas, vérifie que tu as autorisé Claude pour cette page.");
+}
+const SUGG = ["Motive-moi pour aujourd'hui 💪","J'ai raté hier, aide-moi à repartir","Une séance de souplesse de 15 min","Idée de séance sport à la maison","Un repas équilibré et rapide","Fais le point sur ma semaine","Comment tenir la règle des 5 min ?"];
+$('suggest').innerHTML = SUGG.map(s=>`<button class="chip" type="button">${esc(s)}</button>`).join('');
+$('suggest').querySelectorAll('button').forEach(b=>b.onclick=()=>ask(b.textContent));
+const errCopy = c => c==='not_granted' ? "Lumi a besoin de ton autorisation pour utiliser Claude. Rouvre la page et accepte la demande." :
+  c==='rate_limited' ? "Lumi reprend son souffle. Réessaie dans une minute." : c==='cancelled' ? '' : "Lumi n'a pas pu répondre. Réessaie dans un instant.";
+async function ask(text){
+  text = text.trim(); if(!text || busy) return;
+  if (!sample){ toast("Lumi n'est pas disponible ici."); return; }
+  busy=true; $('sendBtn').disabled=true; $('chatInput').value='';
+  chat.push({role:'user',content:text}); addMsg('me', esc(text).replace(/\n/g,'<br>'));
+  const bubble = addMsg('ai','<span class="typing"><i></i><i></i><i></i></span>');
+  ctl = new AbortController();
+  try{
+    const turns = [{role:'user',content:rules()}, ...chat.slice(-12)];
+    const {text:ans} = await sample(turns,{cache:false, signal:ctl.signal, onText:({text})=>{ bubble.innerHTML=md(text); $('msgs').scrollTop=1e9; }});
+    bubble.innerHTML = md(ans); chat.push({role:'assistant',content:ans}); saveChat();
+  }catch(e){
+    chat.pop(); if (e && e.text) bubble.innerHTML=md(e.text); else bubble.remove();
+    const c = errCopy(e && e.code); if (c) addMsg('sys', esc(c));
+  }
+  busy=false; $('sendBtn').disabled=false;
+}
+$('composer').addEventListener('submit', e=>{ e.preventDefault(); ask($('chatInput').value); });
+$('chatInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); ask($('chatInput').value); } });
+$('chatInput').addEventListener('input', e=>{ e.target.style.height='auto'; e.target.style.height=Math.min(120,e.target.scrollHeight)+'px'; });
+$('clearChat').onclick=()=>{ chat=[]; saveChat(); renderChat(); };
+
+$('bilanAI').onclick = async ()=>{
+  if (!sample){ toast("Lumi n'est pas disponible ici."); return; }
+  const btn=$('bilanAI'), out=$('bilanOut'); btn.disabled=true; out.hidden=false; out.innerHTML='<span class="typing"><i></i><i></i><i></i></span>';
+  const f=monthFacts(bilMonth);
+  const wk = f.weeks.map(w=>`S${w.w} : ${w.ok}✓ ${w.ko}✗`).join(' ; ');
+  const rr = ROUTINES.map(r=>{ const x=rate(r.id,d=>d.getMonth()===bilMonth); return `${r.label} ${x.pct===null?'—':x.pct+' %'}`; }).join(' ; ');
+  const prompt = `${rules()}
+
+Aide Pauline à écrire son bilan de ${f.M.name.toLowerCase()} 2026. Chiffres du mois — semaines : ${wk}. Routines : ${rr}. Journées parfaites : ${f.perfect}.
+Propose trois phrases courtes et personnelles, écrites à la première personne comme si Pauline les écrivait, sous ce format exact :
+- **Meilleure semaine :** …
+- **Le plus difficile :** …
+- **Je suis fière de :** …
+Termine par une phrase d'encouragement pour le mois suivant.`;
+  try{ const {text}=await sample(prompt,{onText:({text})=>{ out.innerHTML=md(text); }}); out.innerHTML=md(text); }
+  catch(e){ out.innerHTML = e && e.text ? md(e.text) : esc(errCopy(e&&e.code)||'Annulé.'); }
+  btn.disabled=false;
+};
+
+/* ================= TABS ================= */
+const TABS = {today:renderToday, cal:renderCal, week:renderWeeks, stats:renderStats, coach:renderChat, bilan:renderBilan};
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected', x===t));
+  Object.keys(TABS).forEach(n=>$('p-'+n).hidden = n!==t.dataset.tab);
+  try{ localStorage.setItem('winterArcPauline.tab', t.dataset.tab); }catch(e){}
+  TABS[t.dataset.tab]();
+});
+function renderAll(){ renderHero(); renderToday(); renderStreaks(); const open=Object.keys(TABS).find(n=>!$('p-'+n).hidden); if(open!=='today') TABS[open](); checkBadges(); }
+
+/* ================= 3D SCENE ================= */
+function init3D(){
+  if (!window.THREE) return;
+  const canvas = $('scene');
+  let renderer; try { renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true}); } catch(e){ return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1, 2));
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0xe8cfe6, 20, 46);
+  const camera = new THREE.PerspectiveCamera(42, 1, .1, 200);
+  scene.add(new THREE.HemisphereLight(0xffe6f2, 0x6f5fa8, .75));
+  const sun = new THREE.DirectionalLight(0xfff2f8, .6); sun.position.set(6,12,8); scene.add(sun);
+  const rim = new THREE.DirectionalLight(0xc6a8ff, .45); rim.position.set(-8,5,-6); scene.add(rim);
+
+  // ground
+  const ground = new THREE.Mesh(new THREE.CylinderGeometry(16,16,.5,64), new THREE.MeshStandardMaterial({color:0xfaf3fb, roughness:.9}));
+  ground.position.y = -.25; scene.add(ground);
+
+  function mountain(r,h,base,x,z,seed){
+    const g = new THREE.ConeGeometry(r,h,10,8);
+    const pos = g.attributes.position, col = [];
+    const c1=new THREE.Color(base), snow=new THREE.Color(0xffffff), mid=new THREE.Color(base).lerp(snow,.35);
+    let s=seed; const rnd=()=>{ s=(s*9301+49297)%233280; return s/233280; };
+    for(let i=0;i<pos.count;i++){
+      const y=pos.getY(i), t=(y+h/2)/h;
+      if (t<.98){ const k=(1-t)*.22*r; pos.setX(i,pos.getX(i)+(rnd()-.5)*k); pos.setZ(i,pos.getZ(i)+(rnd()-.5)*k); pos.setY(i,y+(rnd()-.5)*.25*(1-t)); }
+      const c = t>.7 ? snow : t>.52 ? mid : c1; col.push(c.r,c.g,c.b);
+    }
+    g.setAttribute('color', new THREE.Float32BufferAttribute(col,3)); g.computeVertexNormals();
+    const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({vertexColors:true, flatShading:true, roughness:.85}));
+    m.position.set(x,h/2,z); scene.add(m); return m;
+  }
+  const H=6.2, R=4.3;
+  mountain(R,H,0x9fc4a8,0,0,7);
+  mountain(3.6,5,0xb9a3e3,-7,-5,13);
+  mountain(3.2,4.4,0xf0b3c8,6.8,-4.5,21);
+  mountain(2.6,3.4,0xc8b6ee,-11,-1,5);
+  mountain(2.4,3,0xa9cdb3,10.5,0,9);
+  mountain(4.5,6.8,0xcbbbe9,2,-12,31);
+
+  // trees
+  const treeMat = new THREE.MeshStandardMaterial({color:0x5f9077, flatShading:true, roughness:.8});
+  const treeMat2 = new THREE.MeshStandardMaterial({color:0x7aa98c, flatShading:true, roughness:.8});
+  const snowMat = new THREE.MeshStandardMaterial({color:0xffffff, flatShading:true});
+  const trunkMat = new THREE.MeshStandardMaterial({color:0x8b6b5c});
+  let ts=3; const tr=()=>{ ts=(ts*9301+49297)%233280; return ts/233280; };
+  for(let i=0;i<46;i++){
+    const a=tr()*Math.PI*2, d=5.2+tr()*9.5, x=Math.cos(a)*d, z=Math.sin(a)*d;
+    if (Math.hypot(x+7,z+5)<3.8 || Math.hypot(x-6.8,z+4.5)<3.4 || Math.hypot(x-2,z+12)<4.6) continue;
+    const s=.55+tr()*.6, t=new THREE.Group();
+    const m = tr()>.5?treeMat:treeMat2;
+    const c1=new THREE.Mesh(new THREE.ConeGeometry(.6,1.2,7),m); c1.position.y=1.1;
+    const c2=new THREE.Mesh(new THREE.ConeGeometry(.45,.95,7),m); c2.position.y=1.65;
+    const cap=new THREE.Mesh(new THREE.ConeGeometry(.2,.38,7),snowMat); c2.add(cap); cap.position.y=.33;
+    const tk=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.5,6),trunkMat); tk.position.y=.3;
+    t.add(c1,c2,tk); t.scale.setScalar(s); t.position.set(x,0,z); t.rotation.y=tr()*6; scene.add(t);
+  }
+
+  // spiral path up the main mountain
+  const pts=[]; const turns=2.6;
+  for(let i=0;i<=220;i++){ const t=i/220, y=.15+t*(H-.35), rr=R*(1-y/H)+.18, a=t*Math.PI*2*turns+.6;
+    pts.push(new THREE.Vector3(Math.cos(a)*rr, y, Math.sin(a)*rr)); }
+  const curve = new THREE.CatmullRomCurve3(pts);
+  const dashed = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(400)),
+    new THREE.LineDashedMaterial({color:0xffffff, dashSize:.12, gapSize:.12, transparent:true, opacity:.8}));
+  dashed.computeLineDistances(); scene.add(dashed);
+  const trailMat = new THREE.MeshStandardMaterial({color:0xff9ec0, emissive:0xff7fae, emissiveIntensity:.7, roughness:.4});
+  let trail=null;
+  function buildTrail(p){
+    if (trail){ scene.remove(trail); trail.geometry.dispose(); }
+    if (p<.004) { trail=null; return; }
+    const n=Math.max(4,Math.round(220*p)); const sub=[]; for(let i=0;i<=n;i++) sub.push(curve.getPoint(i/n*p));
+    trail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(sub), Math.max(8,n*2), .055, 6, false), trailMat);
+    scene.add(trail);
+  }
+
+  // climber: a glowing star-orb
+  const orb = new THREE.Group();
+  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(.17,1), new THREE.MeshStandardMaterial({color:0xffffff, emissive:0xffb3d1, emissiveIntensity:1.1, flatShading:true}));
+  orb.add(core);
+  const gc=document.createElement('canvas'); gc.width=gc.height=128; const gx=gc.getContext('2d');
+  const gr=gx.createRadialGradient(64,64,0,64,64,64); gr.addColorStop(0,'rgba(255,220,240,1)'); gr.addColorStop(.35,'rgba(255,150,200,.55)'); gr.addColorStop(1,'rgba(255,150,200,0)');
+  gx.fillStyle=gr; gx.fillRect(0,0,128,128);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending}));
+  glow.scale.set(1.3,1.3,1); orb.add(glow);
+  const plight = new THREE.PointLight(0xff9ccc, 1.2, 4); orb.add(plight);
+  scene.add(orb);
+
+  // summit flag
+  const flag = new THREE.Group();
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.9,6), new THREE.MeshStandardMaterial({color:0xffffff}));
+  pole.position.y=.45; flag.add(pole);
+  const fs = new THREE.Shape(); fs.moveTo(0,0); fs.lineTo(.5,-.14); fs.lineTo(0,-.3);
+  const cloth = new THREE.Mesh(new THREE.ShapeGeometry(fs), new THREE.MeshStandardMaterial({color:0xf27fa5, side:THREE.DoubleSide, emissive:0xe06090, emissiveIntensity:.3}));
+  cloth.position.set(.02,.88,0); flag.add(cloth); flag.position.set(0,H-.05,0); scene.add(flag);
+
+  // snow particles
+  const N=900, sp=new Float32Array(N*3), sv=new Float32Array(N);
+  for(let i=0;i<N;i++){ sp[i*3]=(Math.random()-.5)*36; sp[i*3+1]=Math.random()*18; sp[i*3+2]=(Math.random()-.5)*30; sv[i]=.6+Math.random()*1.2; }
+  const sg=new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp,3));
+  const fc=document.createElement('canvas'); fc.width=fc.height=32; const fx=fc.getContext('2d');
+  const fg=fx.createRadialGradient(16,16,0,16,16,16); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)'); fx.fillStyle=fg; fx.fillRect(0,0,32,32);
+  const flakes = new THREE.Points(sg, new THREE.PointsMaterial({size:.16, map:new THREE.CanvasTexture(fc), transparent:true, depthWrite:false, opacity:.95}));
+  scene.add(flakes);
+
+  // stars
+  const S=260, stp=new Float32Array(S*3);
+  for(let i=0;i<S;i++){ const a=Math.random()*Math.PI*2, e=.25+Math.random()*1.1, r=70; stp[i*3]=Math.cos(a)*Math.cos(e)*r; stp[i*3+1]=Math.sin(e)*r*.7+8; stp[i*3+2]=Math.sin(a)*Math.cos(e)*r; }
+  const stg=new THREE.BufferGeometry(); stg.setAttribute('position',new THREE.BufferAttribute(stp,3));
+  scene.add(new THREE.Points(stg,new THREE.PointsMaterial({size:.5,map:new THREE.CanvasTexture(fc),transparent:true,depthWrite:false,fog:false})));
+
+  // aurora ribbons
+  const auroraMat = (c1,c2,off) => new THREE.ShaderMaterial({
+    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.DoubleSide, fog:false,
+    uniforms:{uT:{value:0}, uA:{value:new THREE.Color(c1)}, uB:{value:new THREE.Color(c2)}, uO:{value:off}},
+    vertexShader:`uniform float uT; uniform float uO; varying vec2 vUv;
+      void main(){ vUv=uv; vec3 p=position; p.z+=sin(p.x*.25+uT*.6+uO)*2.2+sin(p.x*.6+uT*.9)*.6; p.y+=sin(p.x*.18+uT*.4+uO)*1.2;
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.); }`,
+    fragmentShader:`uniform float uT; uniform vec3 uA; uniform vec3 uB; uniform float uO; varying vec2 vUv;
+      void main(){ float edge=smoothstep(0.,.25,vUv.y)*smoothstep(1.,.35,vUv.y);
+      float side=smoothstep(0.,.15,vUv.x)*smoothstep(1.,.85,vUv.x);
+      float rays=.55+.45*sin(vUv.x*60.+uT*1.3+uO*3.)*sin(vUv.x*23.-uT*.7);
+      vec3 c=mix(uA,uB,vUv.y);
+      gl_FragColor=vec4(c, edge*side*rays*.42); }`
+  });
+  const auroras=[];
+  [[0x8ff0c8,0xc59bff,0,-26,15],[0xff9ecf,0xb18cff,2.1,-30,17.5],[0xa8f5e0,0xffb6e1,4.2,-34,13]].forEach(([a,b,o,z,y])=>{
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(60,7,120,1), auroraMat(a,b,o)); m.position.set(0,y,z); scene.add(m); auroras.push(m);
+  });
+
+  // interaction
+  let dragX=0, drag=null, auto=0, mx=0, my=0;
+  const hero=document.querySelector('.hero');
+  hero.addEventListener('pointerdown',e=>{ if(e.target.closest('.daypill,.altimeter')) return; drag={x:e.clientX,start:dragX}; });
+  addEventListener('pointerup',()=>drag=null);
+  hero.addEventListener('pointermove',e=>{ const r=hero.getBoundingClientRect(); mx=(e.clientX-r.left)/r.width-.5; my=(e.clientY-r.top)/r.height-.5; if(drag) dragX=drag.start+(e.clientX-drag.x)*.008; });
+
+  let target=0, shown=0, built=-1;
+  window.__setClimb = p => { target=p; };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){ const w=canvas.clientWidth, h=canvas.clientHeight; if(!w||!h) return; renderer.setSize(w,h,false); camera.aspect=w/h;
+    camera.fov = w<560 ? 55 : 42; camera.updateProjectionMatrix(); }
+  addEventListener('resize',resize); resize();
+
+  const clock=new THREE.Clock(); let visible=true;
+  new IntersectionObserver(es=>{ visible=es[0].isIntersecting; }).observe(hero);
+  function frame(){
+    requestAnimationFrame(frame);
+    if(!visible) return;
+    const dt=Math.min(.05,clock.getDelta()), t=clock.elapsedTime;
+    shown += (target-shown)*Math.min(1,dt*1.6);
+    if (Math.abs(shown-built)>.002){ buildTrail(shown); built=shown; }
+    const pp=curve.getPoint(Math.max(0.001,Math.min(1,shown)));
+    orb.position.set(pp.x, pp.y+.28+Math.sin(t*2.4)*.06, pp.z);
+    core.rotation.y=t*1.2; core.rotation.x=t*.7;
+    glow.material.opacity=.75+Math.sin(t*3)*.2;
+    cloth.rotation.y=Math.sin(t*2.5)*.25;
+    if(!reduce){
+      const pos=sg.attributes.position.array;
+      for(let i=0;i<N;i++){ pos[i*3+1]-=sv[i]*dt*.9; pos[i*3]+=Math.sin(t*.8+i)*dt*.25; if(pos[i*3+1]<0){ pos[i*3+1]=18; } }
+      sg.attributes.position.needsUpdate=true;
+      auto += dt*.06;
+    }
+    auroras.forEach(a=>a.material.uniforms.uT.value=t);
+    const ang = auto + dragX + mx*.25 + .5;
+    const narrow = canvas.clientWidth<560;
+    const rad = narrow ? 21 : 18.5;
+    camera.position.set(Math.sin(ang)*rad, 6.2 - my*1.5 + (narrow?1:0), Math.cos(ang)*rad);
+    camera.lookAt(0, narrow?3.6:3.1, 0);
+    renderer.render(scene,camera);
+  }
+  frame();
+}
+
+/* ================= BOOT ================= */
+let startTab='today'; try{ startTab=localStorage.getItem('winterArcPauline.tab')||'today'; }catch(e){}
+init3D();
+renderAll();
+if (startTab!=='today' && TABS[startTab]) document.querySelector(`.tab[data-tab="${startTab}"]`).click();
+checkBadges();
+if (window.claude && claude.use){
+  claude.use('sample').then(s=>{ sample=s; if(!$('p-coach').hidden) renderChat(); }).catch(()=>{});
+}
+connect();
+})();
+</script>

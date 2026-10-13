@@ -427,6 +427,18 @@ button.tile:hover{transform:translateY(-2px)}
 .rcard2 b{display:block;font-family:var(--f-display);font-weight:500;font-size:16px;line-height:1.2}
 .rcard2 small{color:var(--ink-soft);font-size:12.5px}
 
+/* idées */
+.eyebrow-s{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--lilac-deep)}
+.ideas{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(210px,72%);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:thin}
+@media (min-width:700px){.ideas{grid-auto-flow:row;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));overflow:visible}}
+.idea{scroll-snap-align:start;display:flex;flex-direction:column;gap:8px;text-align:left;border-radius:22px;padding:14px;min-width:0;
+  background:linear-gradient(160deg,#fff 0%,var(--blush) 100%);box-shadow:inset 0 0 0 1.5px var(--line);transition:transform .2s}
+.idea:hover{transform:translateY(-2px)}
+.idea .remoji{width:54px;height:54px;font-size:30px}
+.idea b{font-family:var(--f-display);font-weight:500;font-size:16.5px;line-height:1.2}
+.idea small{color:var(--ink-soft);font-size:12.5px}
+.idea .src{font-size:11.5px;font-weight:800;color:var(--lilac-deep)}
+.idea.added{background:linear-gradient(160deg,#fff 0%,#e9f5ec 100%)}
 /* feuille du bas */
 .sheet-bg{position:fixed;inset:0;z-index:40;background:rgba(30,20,50,.38);animation:fade .25s}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;max-width:640px;margin:0 auto;max-height:88vh;overflow:auto;background:var(--card);
@@ -635,8 +647,12 @@ body.noscroll{overflow:hidden}
     </section>
   <section class="panel" id="p-recipes" hidden>
       <div class="stack">
+        <div class="box" id="ideasBox" hidden>
+          <div class="sec-h"><div><span class="eyebrow-s">Trouvées pour toi</span><h2>Idées de recettes</h2><p class="muted sub">Healthy, pas chères et réconfortantes. Touche une idée pour la voir et l'ajouter à tes recettes.</p></div></div>
+          <div class="ideas" id="ideas"></div>
+        </div>
         <div class="box">
-          <div class="sec-h"><div><h2>Mes recettes</h2><p class="muted sub">Tes recettes TikTok, rangées au même endroit.</p></div><button class="btn" id="recNew" type="button">+ Recette</button></div>
+          <div class="sec-h"><div><h2>Mes recettes</h2><p class="muted sub">Tes recettes TikTok et celles que tu as gardées.</p></div><button class="btn" id="recNew" type="button">+ Recette</button></div>
           <div class="form" style="margin-top:0"><input class="inp grow" id="recSearch" type="search" placeholder="Chercher : poulet, pâtes, rapide…" aria-label="Chercher une recette"></div>
           <div class="months" id="recTags" style="margin-top:10px"></div>
           <div class="rgrid" id="recList" style="margin-top:14px"></div>
@@ -846,6 +862,7 @@ async function connect(){
   if (!window.claude || !claude.use) return;
   try {
     const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
+    if (db) loadIdeas(db);
     if (!db || !user) return;
     const uid = await user.id();
     if (!uid) return;
@@ -1476,6 +1493,7 @@ function planOptions(){
   return h;
 }
 function renderRecipes(){
+  if (ideas.length) renderIdeas();
   $('recTags').innerHTML = ['Toutes', ...TAGS, '⭐ Favoris'].map(t=>`<button class="chip" type="button" aria-pressed="${t===(recTag||'Toutes')}">${esc(t)}</button>`).join('');
   $('recTags').querySelectorAll('button').forEach(b=>b.onclick = () => { recTag = b.textContent==='Toutes' ? '' : b.textContent; renderRecipes(); });
   const q = norm(recQuery.trim());
@@ -1513,7 +1531,7 @@ function openRecipeSheet(r, ctx, preview){
       ${(r.steps||[]).length ? `<h4>Étapes</h4><ol>${r.steps.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>` : ''}
       ${preview ? '<p class="muted sub">Cette recette sera ajoutée à tes recettes quand tu valides le menu.</p>' : `<div class="minis">
         ${ctx ? '<button class="chip" type="button" data-a="change">✎ Changer ce repas</button><button class="chip" type="button" data-a="unplan">Retirer du menu</button>' : ''}
-        ${url ? `<a class="chip" href="${esc(url)}" target="_blank" rel="noopener">▶ Voir le TikTok</a>` : ''}
+        ${url ? `<a class="chip" href="${esc(url)}" target="_blank" rel="noopener">${/tiktok\.com/i.test(url) ? '▶ Voir le TikTok' : '↗ Recette d\'origine'}</a>` : ''}
         ${(r.ingredients||[]).length ? '<button class="chip" type="button" data-a="shop">🛒 Aux courses</button>' : ''}
         <button class="chip" type="button" data-a="fav">${r.fav ? '⭐ Favori' : '☆ Favori'}</button>
         ${ctx ? '' : `<select class="inp mini" data-a="plan" aria-label="Planifier ce repas"><option value="">🍽️ Planifier…</option>${planOptions()}</select>`}
@@ -1850,6 +1868,58 @@ function lumiReady(){
   document.querySelectorAll('.no-lumi').forEach(el=>el.hidden = !!sample);
   $('shotLabel').hidden = !(sample && imgCaps);
   if (imgCaps && imgCaps.mediaTypes) $('recShot').accept = imgCaps.mediaTypes.join(',');
+}
+
+/* ================= IDÉES DE RECETTES ================= */
+let ideas = [];
+async function loadIdeas(db){
+  try {
+    const snap = await db.collection('ideas').get();
+    ideas = snap.docs.filter(d=>d.exists).map(d=>({id:d.id, ...d.data()})).filter(x=>x.title)
+      .sort((a,b)=>(a.order||0)-(b.order||0));
+    renderIdeas();
+  } catch(e){}
+}
+const ideaAdded = x => !!recipeByTitle(String(x.title));
+function renderIdeas(){
+  $('ideasBox').hidden = !ideas.length; if (!ideas.length) return;
+  const w = $('ideas'); w.innerHTML = '';
+  ideas.forEach(x=>{
+    const b = document.createElement('button'); b.type = 'button'; const added = ideaAdded(x);
+    b.className = 'idea' + (added ? ' added' : '');
+    const meta = [x.time, isFinite(+x.cost) && +x.cost > 0 ? '≈ '+eur(+x.cost) : ''].filter(Boolean);
+    b.innerHTML = `<span class="remoji">${esc(x.emoji||'🍽️')}</span><b>${esc(x.title)}</b>
+      ${meta.length ? `<small>${meta.map(esc).join(' · ')}</small>` : ''}
+      ${Array.isArray(x.tags) && x.tags.length ? `<div class="tags">${x.tags.slice(0,3).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
+      <span class="src">${added ? '✓ Dans tes recettes' : x.source && x.source.name ? 'Inspirée de ' + esc(x.source.name) : ''}</span>`;
+    b.onclick = () => openIdeaSheet(x);
+    w.appendChild(b);
+  });
+}
+function openIdeaSheet(x){
+  const arr = v => Array.isArray(v) ? v.map(i=>String(i).slice(0,200)).slice(0,40) : [];
+  const r = { title:String(x.title).slice(0,80), emoji:String(x.emoji||'🍽️').slice(0,8), time: x.time ? String(x.time).slice(0,20) : '',
+    cost: isFinite(+x.cost) && +x.cost > 0 ? +x.cost : null, tags: arr(x.tags).filter(t=>TAGS.includes(t)),
+    ingredients: arr(x.ingredients), steps: arr(x.steps), url: safeUrl(x.source && x.source.url) };
+  const meta = [r.time, r.cost ? '≈ '+eur(r.cost) : ''].filter(Boolean), added = ideaAdded(x);
+  openSheet(`<div class="sh-head"><span class="remoji big">${esc(r.emoji)}</span><div style="min-width:0"><h2>${esc(r.title)}</h2>
+      ${meta.length ? `<small class="muted">${meta.map(esc).join(' · ')}</small>` : ''}
+      ${r.tags.length ? `<div class="tags">${r.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}</div></div>
+    <div class="rbody">
+      ${x.why ? `<p class="muted sub">${esc(String(x.why).slice(0,300))}</p>` : ''}
+      ${r.ingredients.length ? `<h4>Ingrédients</h4><ul>${r.ingredients.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>` : ''}
+      ${r.steps.length ? `<h4>Étapes</h4><ol>${r.steps.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>` : ''}
+      <div class="minis">
+        <button class="chip" type="button" id="ideaAdd" ${added ? 'disabled' : ''}>${added ? '✓ Déjà dans tes recettes' : '＋ Ajouter à mes recettes'}</button>
+        ${r.url ? `<a class="chip" href="${esc(r.url)}" target="_blank" rel="noopener">↗ Recette d'origine${x.source && x.source.name ? ' · '+esc(x.source.name) : ''}</a>` : ''}
+      </div>
+    </div>`, r.title);
+  $('ideaAdd').onclick = () => {
+    if (ideaAdded(x)) return;
+    state.recipes.push({id:uid(), added:Date.now(), fav:false, idea:x.id, ...r});
+    save(); checkBadges(); renderIdeas(); if (isShown('recipes')) renderRecipes();
+    $('ideaAdd').textContent = '✓ Ajoutée à tes recettes'; $('ideaAdd').disabled = true; boom(false);
+  };
 }
 
 /* ================= NAVIGATION ================= */

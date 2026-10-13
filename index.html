@@ -364,7 +364,7 @@ button.tile:hover{transform:translateY(-2px)}
 .tile.arc .lnk{color:#fff}
 .tile.arc .bar{background:rgba(255,255,255,.18)}
 .tile.arc::after{content:"";position:absolute;right:-30px;bottom:-40px;width:180px;height:120px;background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,0));clip-path:polygon(0 100%,38% 18%,52% 42%,70% 0,100% 100%);pointer-events:none}
-.quick{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;margin-top:4px;position:relative;z-index:1}
+.quick{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin-top:4px;position:relative;z-index:1}
 .quick button{aspect-ratio:1;border-radius:13px;background:rgba(255,255,255,.13);font-size:19px;display:grid;place-items:center;transition:transform .15s,background .2s}
 .quick button:hover{transform:scale(1.08)}
 .quick button.on{background:#fff;box-shadow:0 0 0 2px var(--sage),0 6px 14px rgba(0,0,0,.18)}
@@ -514,7 +514,7 @@ body.noscroll{overflow:hidden}
           </div>
           <div class="routines" id="routines"></div>
           <div class="dayfoot">
-            <div class="score"><div class="ring" id="ring"><span id="ringTxt">0/9</span></div>
+            <div class="score"><div class="ring" id="ring"><span id="ringTxt">0/8</span></div>
               <div><b id="scoreTitle" style="font-family:var(--f-display);font-weight:600">Ta journée commence</b><div class="muted" style="font-size:13px" id="scoreSub">Coche tes routines au fil de la journée.</div></div></div>
             <button class="chip" id="excDay" title="Noël, anniversaire, repas de famille…">★ Journée exception</button>
           </div>
@@ -784,7 +784,6 @@ body.noscroll{overflow:hidden}
 const ROUTINES = [
   {id:'pas',     icon:'👟', label:'8 000 pas min',        hint:'Bouge, marche, danse'},
   {id:'eau',     icon:'💧', label:'2 L d\'eau',            hint:'8 grands verres'},
-  {id:'seuleau', icon:'🫖', label:'Seulement de l\'eau',   hint:'Pas de soda ni de jus'},
   {id:'grignot', icon:'🍪', label:'0 grignotage',          hint:'Entre les repas'},
   {id:'sommeil', icon:'🌙', label:'Sommeil 7 h 30 à 9 h',  hint:'Écran off avant'},
   {id:'lecture', icon:'📖', label:'Lecture 10–15 min',     hint:'Une page à la fois'},
@@ -818,8 +817,16 @@ const dayIndex = d => Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDat
 const keyD = d => keyOf(d.getMonth(), d.getDate());
 const allDays = []; for(let i=0;i<TOTAL;i++){ const d=new Date(YEAR,9,1+i); allDays.push(d); }
 const isFuture = d => d > REAL_TODAY;
-const weekOf = day => Math.min(5, Math.floor((day-1)/7)+1);
-const weekKey = (m,w) => `${YEAR}-${pad(m+1)}-S${w}`;
+// Semaines du lundi au dimanche : S1 = jeudi 1 → dimanche 4 octobre, S2 = lundi 5 → dimanche 11…
+const WEEK_OFFSET = (START.getDay()+6)%7;
+const NWEEKS = Math.floor((TOTAL-1+WEEK_OFFSET)/7)+1;
+const weekNumOf = d => Math.floor((dayIndex(d)+WEEK_OFFSET)/7)+1;
+const weekKey = n => `${YEAR}-W${n}`;
+const weekRange = n => [allDays[Math.max(0,(n-1)*7-WEEK_OFFSET)], allDays[Math.min(TOTAL-1,n*7-1-WEEK_OFFSET)]];
+const SHORT_M = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+function weekLabel(n){ const [a,b] = weekRange(n);
+  return a.getMonth()===b.getMonth() ? `${a.getDate()}–${b.getDate()} ${SHORT_M[a.getMonth()]}` : `${a.getDate()} ${SHORT_M[a.getMonth()]} – ${b.getDate()} ${SHORT_M[b.getMonth()]}`; }
+const weeksInMonth = m => { const out=[]; for(let n=1;n<=NWEEKS;n++){ const [a,b]=weekRange(n); if(a.getMonth()<=m && b.getMonth()>=m) out.push(n); } return out; };
 
 function normalize(s){
   s = s && typeof s === 'object' ? s : {};
@@ -828,7 +835,14 @@ function normalize(s){
   m.goals = m.goals || []; m.budget = m.budget || {}; m.expenses = m.expenses || []; m.wishes = m.wishes || []; m.kept = m.kept || 0;
   s.meals = s.meals || {}; s.shop = s.shop || []; s.recipes = s.recipes || [];
   s.prefs = Object.assign({weeks:'1', slots:'both', people:'1', budget:'', wish:''}, s.prefs || {});
-  s.v = 2; return s;
+  for (const k of Object.keys(s.weeks)){
+    const mm = k.match(/^(\d{4})-(\d\d)-S(\d)$/); if (!mm) continue;
+    const month = +mm[2]-1, w = +mm[3];
+    const n = month===9 ? w : weekNumOf(new Date(YEAR, month, Math.min((w-1)*7+1, 28)));
+    const nk = weekKey(n); if (!s.weeks[nk]) s.weeks[nk] = s.weeks[k];
+    delete s.weeks[k];
+  }
+  s.v = 3; return s;
 }
 const hasData = () => Object.keys(state.days).length || Object.keys(state.weeks).length || state.money.goals.length ||
   state.money.expenses.length || state.recipes.length || state.shop.length || Object.keys(state.meals).length;
@@ -976,8 +990,8 @@ function renderToday(){
   });
   const s = dayStats(k);
   $('ring').style.setProperty('--p', Math.round((s.ok+s.exc)*100/ROUTINES.length));
-  $('ring').style.background = `conic-gradient(var(--sage) ${Math.round(s.ok*100/9)}%, var(--apricot) 0 ${Math.round((s.ok+s.exc)*100/9)}%, var(--mist) 0)`;
-  $('ringTxt').textContent = `${s.ok+s.exc}/9`;
+  $('ring').style.background = `conic-gradient(var(--sage) ${Math.round(s.ok*100/ROUTINES.length)}%, var(--apricot) 0 ${Math.round((s.ok+s.exc)*100/ROUTINES.length)}%, var(--mist) 0)`;
+  $('ringTxt').textContent = `${s.ok+s.exc}/${ROUTINES.length}`;
   $('scoreTitle').textContent = s.perfect ? 'Journée parfaite ♡' : s.ok>=6 ? 'Super journée !' : s.set ? 'Ça avance' : 'Ta journée commence';
   $('scoreSub').textContent = s.perfect ? 'Toutes tes routines sont faites. Fière de toi.' :
     s.ko ? `${s.ko} raté${s.ko>1?'s':''} : ce n'est pas grave, demain on repart.` : 'Coche tes routines au fil de la journée.';
@@ -994,8 +1008,8 @@ $('excDay').onclick=()=>{
   toast(n ? 'Journée exception ★ Profite, ça ne compte pas comme un échec.' : 'Tout est déjà rempli pour ce jour.');
 };
 
-function goalCell(m, w, g, compact){
-  const wk = weekKey(m,w); const val = (state.weeks[wk]||{})[g.id];
+function goalCell(n, g, compact){
+  const wk = weekKey(n); const val = (state.weeks[wk]||{})[g.id];
   const box = document.createElement('div');
   const commit = (v) => {
     state.weeks[wk] = state.weeks[wk]||{};
@@ -1027,13 +1041,13 @@ function goalCell(m, w, g, compact){
   return box;
 }
 function renderWeekMini(){
-  const m = viewDate.getMonth(), w = weekOf(viewDate.getDate());
-  $('wkLabel').textContent = `${MONTHS.find(x=>x.m===m).name} · S${w}`;
+  const n = weekNumOf(viewDate);
+  $('wkLabel').textContent = `S${n} · ${weekLabel(n)}`;
   const wrap = $('weekMini'); wrap.innerHTML='';
   GOALS.forEach(g=>{
     const row=document.createElement('div'); row.className='goal';
     row.innerHTML=`<span style="font-size:14px;font-weight:700;min-width:0">${g.icon} ${esc(g.label)}</span>`;
-    row.appendChild(goalCell(m,w,g,true)); wrap.appendChild(row);
+    row.appendChild(goalCell(n,g,true)); wrap.appendChild(row);
   });
 }
 function renderStreaks(){
@@ -1081,15 +1095,14 @@ let wkMonth = TODAY.getMonth();
 function renderWeeks(){
   monthChips('wkMonths', wkMonth, m=>{wkMonth=m; renderWeeks();});
   const M = MONTHS.find(x=>x.m===wkMonth); const t=$('wkTable'); t.innerHTML='';
-  const nW = weekOf(M.days);
-  const curW = TODAY.getMonth()===wkMonth ? weekOf(TODAY.getDate()) : 0;
+  const wks = weeksInMonth(wkMonth), curW = weekNumOf(TODAY);
   const thead=document.createElement('thead'); let hr='<tr><th></th>';
-  for(let w=1;w<=nW;w++){ const a=(w-1)*7+1, b=Math.min(M.days,w*7); hr+=`<th>S${w}<span class="days">${a}–${b}</span></th>`; }
+  for(const n of wks){ hr+=`<th>S${n}<span class="days">${weekLabel(n)}</span></th>`; }
   thead.innerHTML=hr+'</tr>'; t.appendChild(thead);
   const tb=document.createElement('tbody');
   GOALS.forEach(g=>{
     const tr=document.createElement('tr'); const td0=document.createElement('td'); td0.textContent=`${g.icon}  ${g.label}`; tr.appendChild(td0);
-    for(let w=1;w<=nW;w++){ const td=document.createElement('td'); if(w===curW) td.className='cur'; const c=goalCell(wkMonth,w,g,false); c.style.justifyContent='center'; td.appendChild(c); tr.appendChild(td); }
+    for(const n of wks){ const td=document.createElement('td'); if(n===curW) td.className='cur'; const c=goalCell(n,g,false); c.style.justifyContent='center'; td.appendChild(c); tr.appendChild(td); }
     tb.appendChild(tr);
   });
   t.appendChild(tb);
@@ -1098,7 +1111,7 @@ function renderWeeks(){
 /* ================= BADGES & STATS ================= */
 const BADGES = [
   {id:'first',  e:'🌱', n:'Premier pas',          d:'Ta première routine cochée', ok:()=>Object.keys(state.days).length>0},
-  {id:'perfect',e:'💎', n:'Journée parfaite',     d:'Les 9 routines en un jour',  ok:()=>perfectDays()>=1},
+  {id:'perfect',e:'💎', n:'Journée parfaite',     d:'Toutes tes routines en un jour',ok:()=>perfectDays()>=1},
   {id:'p7',     e:'👑', n:'Reine de la semaine',  d:'7 journées parfaites',       ok:()=>perfectDays()>=7},
   {id:'s7',     e:'🔥', n:'Flamme d\'hiver',       d:'7 jours d\'affilée sur une routine', ok:()=>ROUTINES.some(r=>bestStreak(r.id)>=7)},
   {id:'s21',    e:'🦢', n:'Habitude ancrée',      d:'21 jours d\'affilée',        ok:()=>ROUTINES.some(r=>bestStreak(r.id)>=21)},
@@ -1146,7 +1159,7 @@ function renderStats(){
 let bilMonth = TODAY.getMonth();
 function monthFacts(m){
   const M=MONTHS.find(x=>x.m===m); const inM = d=>d.getMonth()===m;
-  const weeks=[]; for(let w=1;w<=weekOf(M.days);w++){ let ok=0,ko=0; for(let d=(w-1)*7+1; d<=Math.min(M.days,w*7); d++){ const s=dayStats(keyOf(m,d)); ok+=s.ok; ko+=s.ko; } weeks.push({w,ok,ko,pct: ok+ko? Math.round(ok*100/(ok+ko)) : null}); }
+  const weeks=[]; for(const w of weeksInMonth(m)){ let ok=0,ko=0; for(const d of allDays){ if(weekNumOf(d)!==w) continue; const s=dayStats(keyD(d)); ok+=s.ok; ko+=s.ko; } weeks.push({w,ok,ko,pct: ok+ko? Math.round(ok*100/(ok+ko)) : null}); }
   const rated = weeks.filter(w=>w.pct!==null);
   const bestW = rated.sort((a,b)=>b.pct-a.pct||b.ok-a.ok)[0];
   const rr = ROUTINES.map(r=>({r,...rate(r.id,inM)})).filter(x=>x.pct!==null);
@@ -1180,7 +1193,7 @@ function context(){
   lines.push(`Journées parfaites : ${perfectDays()}.`);
   lines.push('Routines (statut aujourd\'hui | série actuelle | taux de réussite) :');
   ROUTINES.forEach(r=>{ const v=get(k,r.id); const x=rate(r.id); lines.push(`- ${r.label} : ${v==='ok'?'fait':v==='ko'?'raté':v==='exc'?'exception':'pas encore coché'} | ${streak(r.id)} j | ${x.pct===null?'pas de données':x.pct+' %'}`); });
-  const m=t.getMonth(), w=weekOf(t.getDate()), wk=state.weeks[weekKey(m,w)]||{};
+  const w=weekNumOf(t), wk=state.weeks[weekKey(w)]||{};
   lines.push(`Objectifs de la semaine en cours (S${w}) : sport ${wk.sport||0}/5, souplesse ${wk.flex||0}/3, alimentation équilibrée ${wk.alim||'non noté'}, 1 seul plaisir ${wk.plaisir||'non noté'}.`);
   lines.push('7 derniers jours (✓ respectées / ✗ ratées / ★ exceptions) :');
   for(let j=Math.max(0,i-7); j<i; j++){ const d=allDays[j], s=dayStats(keyD(d)); lines.push(`- ${d.getDate()}/${d.getMonth()+1} : ${s.ok}✓ ${s.ko}✗ ${s.exc}★`); }
@@ -1818,7 +1831,7 @@ function renderHome(){
   $('bento').innerHTML = `
     <div class="tile arc span2">
       <div class="k">Winter Arc${inArc ? ` · jour ${di} sur 92` : ''}<button class="lnk" type="button" data-go="arc">Ouvrir →</button></div>
-      <div class="v">${st.ok+st.exc}/9<small>routines aujourd'hui</small></div>
+      <div class="v">${st.ok+st.exc}/${ROUTINES.length}<small>routines aujourd'hui</small></div>
       ${inArc ? `<div class="quick">${ROUTINES.map(r=>{ const on = get(k,r.id)==='ok';
         return `<button type="button" data-r="${r.id}" class="${on?'on':''}" aria-pressed="${on}" aria-label="${esc(r.label)}" title="${esc(r.label)}">${r.icon}</button>`; }).join('')}</div>` : ''}
       <div class="bar"><i style="width:${(p*100).toFixed(1)}%"></i></div>

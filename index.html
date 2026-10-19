@@ -439,6 +439,13 @@ button.tile:hover{transform:translateY(-2px)}
 .idea small{color:var(--ink-soft);font-size:12.5px}
 .idea .src{font-size:11.5px;font-weight:800;color:var(--lilac-deep)}
 .idea.added{background:linear-gradient(160deg,#fff 0%,#e9f5ec 100%)}
+.bulk textarea.inp{width:100%;margin-top:12px;resize:vertical}
+.bulklist{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.bulkrow{display:flex;gap:10px;align-items:center;background:var(--snow);border-radius:16px;padding:8px 10px}
+.bulkrow.off{opacity:.5}
+.bulkrow .rcard2{background:none;padding:0;flex:1;min-width:0}
+.bulkrow .rcard2:hover{transform:none}
+.progress{display:flex;gap:10px;align-items:center;margin-top:12px;font-size:14px;color:var(--ink-soft)}
 /* feuille du bas */
 .sheet-bg{position:fixed;inset:0;z-index:40;background:rgba(30,20,50,.38);animation:fade .25s}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;max-width:640px;margin:0 auto;max-height:88vh;overflow:auto;background:var(--card);
@@ -650,6 +657,15 @@ body.noscroll{overflow:hidden}
         <div class="box" id="ideasBox" hidden>
           <div class="sec-h"><div><span class="eyebrow-s">Trouvées pour toi</span><h2>Idées de recettes</h2><p class="muted sub">Healthy, pas chères et réconfortantes. Touche une idée pour la voir et l'ajouter à tes recettes.</p></div></div>
           <div class="ideas" id="ideas"></div>
+        </div>
+        <div class="box bulk needs-lumi">
+          <span class="eyebrow-s">Ajout rapide</span>
+          <h2>Plusieurs recettes d'un coup</h2>
+          <p class="muted sub">Choisis toutes tes captures TikTok en même temps (une capture par recette), ou écris juste le nom des plats. Lumi remplit toutes les fiches, tu n'as plus qu'à valider.</p>
+          <div class="form"><label class="btn" id="bulkShotLabel" hidden>📸 Choisir mes captures<input type="file" id="bulkShot" accept="image/*" multiple hidden></label></div>
+          <textarea class="inp" id="bulkNames" rows="4" maxlength="1500" aria-label="Noms des plats, un par ligne" placeholder="Ou écris un plat par ligne :&#10;bowl poulet teriyaki&#10;gratin de pâtes au thon&#10;cookies healthy à la banane"></textarea>
+          <div class="form" style="margin-top:8px"><button class="btn soft" id="bulkGo" type="button">✨ Créer les fiches</button></div>
+          <div id="bulkOut"></div>
         </div>
         <div class="box">
           <div class="sec-h"><div><h2>Mes recettes</h2><p class="muted sub">Tes recettes TikTok et celles que tu as gardées.</p></div><button class="btn" id="recNew" type="button">+ Recette</button></div>
@@ -1519,7 +1535,7 @@ function renderRecipes(){
     wrap.innerHTML = `<div class="empty"><b>Pour ajouter une recette vue sur TikTok :</b><ol>
       <li>Ouvre le TikTok dans tes favoris.</li>
       <li>Fais une capture d'écran (ou Partager → Copier le lien, et copie la légende).</li>
-      <li>Touche <b>+ Recette</b> ici et donne-la à Lumi, ou remplis la fiche toi-même.</li></ol></div>`;
+      <li>Utilise <b>l'ajout rapide</b> juste au-dessus pour en ajouter plusieurs d'un coup, ou <b>+ Recette</b> pour une seule.</li></ol></div>`;
     return;
   }
   if (!list.length){ wrap.innerHTML = '<p class="muted sub">Aucune recette ne correspond.</p>'; return; }
@@ -1542,7 +1558,7 @@ function openRecipeSheet(r, ctx, preview){
     <div class="rbody">
       ${(r.ingredients||[]).length ? `<h4>Ingrédients</h4><ul>${r.ingredients.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>` : ''}
       ${(r.steps||[]).length ? `<h4>Étapes</h4><ol>${r.steps.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>` : ''}
-      ${preview ? '<p class="muted sub">Cette recette sera ajoutée à tes recettes quand tu valides le menu.</p>' : `<div class="minis">
+      ${preview ? `<p class="muted sub">${esc(typeof preview === 'string' ? preview : 'Cette recette sera ajoutée à tes recettes quand tu valides le menu.')}</p>` : `<div class="minis">
         ${ctx ? '<button class="chip" type="button" data-a="change">✎ Changer ce repas</button><button class="chip" type="button" data-a="unplan">Retirer du menu</button>' : ''}
         ${url ? `<a class="chip" href="${esc(url)}" target="_blank" rel="noopener">${/tiktok\.com/i.test(url) ? '▶ Voir le TikTok' : '↗ Recette d\'origine'}</a>` : ''}
         ${(r.ingredients||[]).length ? '<button class="chip" type="button" data-a="shop">🛒 Aux courses</button>' : ''}
@@ -1633,6 +1649,86 @@ $('recShot').addEventListener('change', e=>{
   const files = [...e.target.files].slice(0, imgCaps ? imgCaps.maxCount : 1);
   if (files.length) lumiRecipe(files);
 });
+
+/* ================= AJOUT RAPIDE ================= */
+let bulk = [], bulkBusy = false;
+const RECIPE_JSON = `{"title": "nom court et appétissant", "emoji": "un seul emoji de plat", "time": "ex. 20 min", "cost": nombre ou null, "tags": [choisis parmi ${JSON.stringify(TAGS)}], "ingredients": ["quantité + ingrédient"], "steps": ["étape courte"]}`;
+function cleanRecipe(r){
+  if (!r || typeof r !== 'object' || r.error || !r.title) return null;
+  const arr = v => Array.isArray(v) ? v.map(x=>String(x).slice(0,160)).filter(Boolean).slice(0,40) : [];
+  return { title:String(r.title).slice(0,80), emoji:String(r.emoji||'🍽️').slice(0,8), time: r.time ? String(r.time).slice(0,20) : '',
+    cost: isFinite(+r.cost) && +r.cost > 0 ? Math.round(+r.cost*100)/100 : null, url:'',
+    tags: arr(r.tags).filter(t=>TAGS.includes(t)), ingredients: arr(r.ingredients), steps: arr(r.steps) };
+}
+function bulkProgress(t){ $('bulkOut').innerHTML = `<div class="progress"><span class="typing"><i></i><i></i><i></i></span><span>${esc(t)}</span></div>`; }
+function bulkAdd(r){ if (!r) return; const dup = !!recipeByTitle(r.title) || bulk.some(b=>norm(b.r.title)===norm(r.title)); bulk.push({r, keep:!dup, dup}); }
+async function bulkFromImages(files){
+  files = [...files].slice(0,20); let failed = 0, stop = '';
+  for (let i=0;i<files.length;i++){
+    bulkProgress(`Lumi lit la capture ${i+1} sur ${files.length}…`);
+    try {
+      const r = await sample.json(`Voici une capture d'écran d'une vidéo TikTok de recette (image, texte à l'écran, légende ou commentaires). Extrais la recette, en français. Si les quantités manquent, propose des quantités raisonnables pour 2 personnes. Le prix est une estimation en euros pour toute la recette, dans un supermarché en France.
+Réponds uniquement avec un objet JSON :
+${RECIPE_JSON}
+Si tu ne vois aucune recette, réponds {"error": "explication courte"}.`, {images:[files[i]]});
+      const c = cleanRecipe(r); if (c) bulkAdd(c); else failed++;
+    } catch(e){
+      if (e && (e.code==='rate_limited' || e.code==='not_granted' || e.code==='images_unavailable')){ stop = errCopy(e.code); break; }
+      failed++;
+    }
+  }
+  return {failed, stop};
+}
+async function bulkFromNames(names){
+  bulkProgress(`Lumi écrit ${names.length} fiche${names.length>1?'s':''}…`);
+  try {
+    const res = await sample.json(`Pauline a repéré ces plats sur TikTok et veut leurs fiches recettes, en version simple, healthy et pas chère quand c'est possible, pour 2 personnes. Le prix est une estimation en euros pour toute la recette, dans un supermarché en France.
+Plats :
+${names.map(n=>'- '+n).join('\n')}
+Réponds uniquement avec un objet JSON {"recipes": [ ... ]} contenant une fiche par plat, dans le même ordre, chacune de la forme :
+${RECIPE_JSON}
+Étapes courtes, 6 au maximum par recette.`);
+    let n = 0; (Array.isArray(res && res.recipes) ? res.recipes : []).forEach(r=>{ const c = cleanRecipe(r); if (c){ bulkAdd(c); n++; } });
+    return {failed: Math.max(0, names.length - n), stop:''};
+  } catch(e){ return {failed: names.length, stop: e && e.code==='invalid_json' ? "La réponse de Lumi était incomplète. Essaie avec moins de plats d'un coup." : errCopy(e && e.code) || 'Annulé.'}; }
+}
+async function runBulk(kind, input){
+  if (!sample){ toast("Lumi n'est pas disponible ici."); return; }
+  if (bulkBusy) return; bulkBusy = true; $('bulkGo').disabled = true;
+  const {failed, stop} = kind==='img' ? await bulkFromImages(input) : await bulkFromNames(input);
+  bulkBusy = false; $('bulkGo').disabled = false; $('bulkShot').value = '';
+  renderBulk(failed ? `${failed} ${kind==='img' ? 'capture' : 'plat'}${failed>1?'s':''} sans recette lisible.` : '', stop);
+}
+function renderBulk(warn, stop){
+  const out = $('bulkOut');
+  if (!bulk.length){ out.innerHTML = `<p class="muted sub">${esc(stop || warn || "Lumi n'a trouvé aucune recette.")}</p>`; return; }
+  const n = bulk.filter(b=>b.keep).length;
+  out.innerHTML = `<div class="bulklist" id="bulkList"></div>
+    ${stop || warn ? `<p class="muted sub">${esc([warn, stop].filter(Boolean).join(' '))}</p>` : ''}
+    <div class="form"><button class="btn" type="button" id="bulkSave" ${n?'':'disabled'}>Enregistrer ${n} recette${n>1?'s':''}</button><button class="btn soft" type="button" id="bulkCancel">Tout annuler</button></div>`;
+  const list = $('bulkList');
+  bulk.forEach(b=>{
+    const row = document.createElement('div'); row.className = 'bulkrow' + (b.keep ? '' : ' off');
+    row.innerHTML = `<button class="check ${b.keep?'on':''}" type="button" role="checkbox" aria-checked="${b.keep}" aria-label="Garder ${esc(b.r.title)}">${b.keep?'✓':''}</button>`;
+    const card = recipeCard(b.r); card.onclick = () => openRecipeSheet(b.r, null, b.dup ? 'Tu as déjà une recette avec ce nom.' : "Coche-la puis touche « Enregistrer » pour l'ajouter à tes recettes.");
+    if (b.dup) card.querySelector('.grow').insertAdjacentHTML('beforeend', '<small>Déjà dans tes recettes</small>');
+    row.appendChild(card);
+    row.querySelector('.check').onclick = () => { b.keep = !b.keep; renderBulk(warn, stop); };
+    list.appendChild(row);
+  });
+  $('bulkSave').onclick = () => {
+    let n = 0; bulk.filter(b=>b.keep).forEach(b=>{ state.recipes.push({id:uid(), added:Date.now()+n, fav:false, ...b.r}); n++; });
+    bulk = []; save(); renderBulk(); $('bulkOut').innerHTML = ''; $('bulkNames').value = '';
+    renderRecipes(); checkBadges(); boom(true); toast(`${n} recette${n>1?'s':''} ajoutée${n>1?'s':''} 📌`);
+  };
+  $('bulkCancel').onclick = () => { bulk = []; $('bulkOut').innerHTML = ''; };
+}
+$('bulkShot').addEventListener('change', e=>{ const f = [...e.target.files]; if (f.length) runBulk('img', f); });
+$('bulkGo').onclick = () => {
+  const names = $('bulkNames').value.split('\n').map(x=>x.replace(/^\s*[-•*\d.)]+\s*/,'').trim()).filter(Boolean).slice(0,12);
+  if (!names.length){ toast('Écris au moins un plat, ou choisis tes captures'); return; }
+  runBulk('names', names);
+};
 
 /* ================= REPAS ================= */
 const SLOTS = [['midi','Midi'],['soir','Soir']];
@@ -1880,6 +1976,8 @@ function lumiReady(){
   document.querySelectorAll('.needs-lumi').forEach(el=>el.hidden = !sample);
   document.querySelectorAll('.no-lumi').forEach(el=>el.hidden = !!sample);
   $('shotLabel').hidden = !(sample && imgCaps);
+  $('bulkShotLabel').hidden = !(sample && imgCaps);
+  if (imgCaps && imgCaps.mediaTypes) $('bulkShot').accept = imgCaps.mediaTypes.join(',');
   if (imgCaps && imgCaps.mediaTypes) $('recShot').accept = imgCaps.mediaTypes.join(',');
 }
 

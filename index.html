@@ -473,6 +473,12 @@ button.tile:hover{transform:translateY(-2px)}
 .bigadd{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:22px;background:var(--card);font-family:var(--f-display);font-weight:600;font-size:17px;color:var(--lilac-deep);box-shadow:0 1px 0 var(--line),0 12px 30px rgba(120,90,160,.1);transition:transform .2s}
 .bigadd span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--lilac),var(--rose));color:#fff;font-size:17px}
 .bigadd:hover{transform:translateY(-2px)}
+.addrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bigadd.inc{color:var(--sage-deep)}
+.bigadd.inc span{background:linear-gradient(135deg,#8fd4a2,var(--sage))}
+.ldot.inc{background:#9be3b0}
+.txn .amt.plus{color:var(--sage-deep)}
+.mh-pill{display:inline-block;margin-top:10px;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.14);font-size:13px;color:#fff}
 .dayhead{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:800;color:var(--ink-soft);margin:16px 0 2px}
 .txn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 4px;border-radius:14px;transition:background .2s}
 .txn:hover{background:var(--snow)}
@@ -767,7 +773,8 @@ body.noscroll{overflow:hidden}
   <section class="panel" id="p-money" hidden>
     <div class="stack">
       <div class="mhero" id="mHero"></div>
-      <button class="bigadd" type="button" id="addExp"><span aria-hidden="true">＋</span>Ajouter une dépense</button>
+      <div class="addrow"><button class="bigadd" type="button" id="addExp"><span aria-hidden="true">－</span>Dépense</button><button class="bigadd inc" type="button" id="addInc"><span aria-hidden="true">＋</span>Revenu</button></div>
+      <div class="box"><div class="sec-h" style="margin-bottom:0"><h3>Mes revenus</h3><span class="muted" id="incTotal" style="font-size:13px"></span></div><div id="incList"></div></div>
       <div class="grid2">
         <div class="box"><div class="sec-h" style="margin-bottom:0"><h3>Mes dépenses</h3><span class="muted" id="expCount" style="font-size:13px"></span></div><div id="expList"></div></div>
         <div class="box"><h3>Où va mon argent</h3><div class="rstats" id="catStats" style="margin-top:12px"></div></div>
@@ -906,7 +913,7 @@ function normalize(s){
   s = s && typeof s === 'object' ? s : {};
   s.days = s.days || {}; s.weeks = s.weeks || {}; s.bilans = s.bilans || {};
   const m = s.money = s.money || {};
-  m.goals = m.goals || []; m.budget = m.budget || {}; m.expenses = m.expenses || []; m.wishes = m.wishes || []; m.kept = m.kept || 0; m.subs = m.subs || [];
+  m.goals = m.goals || []; m.budget = m.budget || {}; m.expenses = m.expenses || []; m.wishes = m.wishes || []; m.kept = m.kept || 0; m.subs = m.subs || []; m.incomes = m.incomes || []; m.extras = m.extras || [];
   s.meals = s.meals || {}; s.shop = s.shop || []; s.recipes = s.recipes || [];
   s.prefs = Object.assign({weeks:'1', slots:'both', people:'1', budget:'', wish:''}, s.prefs || {});
   for (const k of Object.keys(s.weeks)){
@@ -1253,6 +1260,8 @@ function renderBilan(){
   if (f.hard && f.hard!==f.top) items.push(['🧗‍♀️', `La plus difficile : <b>${esc(f.hard.r.label)}</b> (${f.hard.pct} %).`]);
   items.push(['💎', `<b>${f.perfect}</b> journée${f.perfect>1?'s':''} parfaite${f.perfect>1?'s':''} en ${f.M.name.toLowerCase()}.`]);
   const bmk = `${YEAR}-${pad(bilMonth+1)}`, bsp = monthSpent(bmk) + monthFixed(bmk), bbu = state.money.budget[bmk];
+  const binc = monthIncome(bmk);
+  if (binc) items.push(['💶', `Revenus : <b>${eur(binc)}</b>, il te reste ${eur(binc - bsp)} après tes dépenses.`]);
   if (bsp || bbu) items.push(['💰', bbu ? `Dépensé : <b>${eur(bsp)}</b> sur un budget de ${eur(bbu)}.` : `Dépensé : <b>${eur(bsp)}</b> ce mois-ci.`]);
   $('facts').innerHTML = items.map(([e,t])=>`<div class="fact"><span class="e">${e}</span><span>${t}</span></div>`).join('');
 }
@@ -1274,6 +1283,7 @@ function context(){
   const mm = state.money, mk = monthKey(REAL_TODAY);
   lines.push(`Tirelires : ${mm.goals.length ? mm.goals.map(g=>`${g.name} ${eur(g.saved)} sur ${eur(g.price)}`).join(' ; ') : 'aucune'}.`);
   lines.push(`Abonnements actifs : ${mm.subs.filter(s=>s.active!==false).map(s=>`${s.name} ${eur(s.amount)} ${perText(s)}`).join(' ; ') || 'aucun'} (≈ ${eur(monthFixed(mk))} par mois).`);
+  lines.push(`Revenus du mois : ${eur(monthIncome(mk))}${mm.incomes.length ? ` (réguliers : ${mm.incomes.filter(x=>x.active!==false).map(x=>`${x.name} ${eur(x.amount)}`).join(' ; ')})` : ''}.`);
   lines.push(`Budget du mois (abonnements compris) : ${mm.budget[mk] ? eur(mm.budget[mk]) : 'pas fixé'} ; dépenses notées ce mois-ci : ${eur(monthSpent(mk))} ; gardé en renonçant à des envies : ${eur(mm.kept||0)}.`);
   if (mm.wishes.length) lines.push(`Envies en attente (règle des 7 jours) : ${mm.wishes.map(w=>`${w.name} ${eur(w.price)}`).join(' ; ')}.`);
   const ml = iso => { const x = state.meals[iso] || {}; return SLOTS.map(([s,l])=>`${l.toLowerCase()} ${x[s] ? x[s].t : 'rien'}`).join(', '); };
@@ -1388,6 +1398,11 @@ const subCatOf = id => SUB_CATS.find(c=>c.id===id) || SUB_CATS[SUB_CATS.length-1
 const subMonthly = s => s.freq==='an' ? s.amount/12 : s.freq==='semaine' ? s.amount*52/12 : s.amount;
 function monthSpent(mk, cat){ return state.money.expenses.filter(e=>e.date.slice(0,7)===mk && (!cat || e.cat===cat)).reduce((s,e)=>s+e.amount,0); }
 function monthFixed(mk){ return state.money.subs.filter(s=>s.active!==false && (!s.since || s.since<=mk)).reduce((t,s)=>t+subMonthly(s),0); }
+function monthIncome(mk){
+  const m = state.money;
+  return m.incomes.filter(x=>x.active!==false && (!x.since || x.since<=mk)).reduce((t,x)=>t+x.amount,0)
+    + m.extras.filter(x=>x.date.slice(0,7)===mk).reduce((t,x)=>t+x.amount,0);
+}
 function addExpense(amount, cat, note, date){ state.money.expenses.push({id:uid(), date: date || isoD(REAL_TODAY), amount, cat, note: note||''}); }
 function nextCharge(s){
   if (s.freq==='semaine') return null;
@@ -1407,19 +1422,26 @@ const perText = s => s.freq==='an' ? '/ an' : s.freq==='semaine' ? '/ sem.' : '/
 function renderMoney(){
   const m = state.money, mk = monthKey(moneyMonth), spent = monthSpent(mk), fixed = monthFixed(mk), budget = m.budget[mk] || 0, rest = budget - fixed - spent;
   const pct = v => budget ? Math.max(0, Math.min(100, v*100/budget)) : 0;
-  const pf = pct(fixed);
+  const pf = pct(fixed), inc = monthIncome(mk), left = inc - fixed - spent, pi = v => inc ? Math.max(0, Math.min(100, v*100/inc)) : 0;
   $('mHero').innerHTML = `<div class="mh-top"><button class="round" type="button" id="mPrev" aria-label="Mois précédent">‹</button>
       <span class="mh-month">${cap(MONTH_NAMES[moneyMonth.getMonth()])} ${moneyMonth.getFullYear()}</span>
       <button class="round" type="button" id="mNext" aria-label="Mois suivant">›</button></div>
-    ${budget ? `<div class="mh-k">${rest >= 0 ? 'Il te reste' : 'Tu dépasses ton budget de'}</div><div class="mh-v">${eur(Math.abs(rest))}</div>
+    ${inc ? `<div class="mh-k">${left >= 0 ? 'Il te reste' : 'Tu es dans le rouge de'}</div><div class="mh-v">${eur(Math.abs(left))}</div>
+      <div class="mh-s">${eur(inc)} de revenus, moins ${eur(fixed+spent)} d'abonnements et de dépenses</div>
+      <div class="stackbar"><i class="fix" style="width:${pi(fixed)}%"></i><i class="${left < 0 ? 'over' : 'var'}" style="width:${Math.min(pi(spent), 100-pi(fixed))}%"></i></div>
+      <div class="legend2"><span><i class="ldot inc"></i>Revenus <b>${eur(inc)}</b></span><span><i class="ldot fix"></i>Abonnements <b>${eur(fixed)}</b></span><span><i class="ldot var"></i>Dépenses <b>${eur(spent)}</b></span></div>
+      ${budget ? `<div class="mh-pill">🎯 Budget : ${rest >= 0 ? `encore ${eur(rest)} sur ${eur(budget)}` : `dépassé de ${eur(-rest)}`}</div>` : ''}`
+    : budget ? `<div class="mh-k">${rest >= 0 ? 'Il te reste' : 'Tu dépasses ton budget de'}</div><div class="mh-v">${eur(Math.abs(rest))}</div>
       <div class="mh-s">sur ${eur(budget)} de budget, abonnements compris</div>
-      <div class="stackbar"><i class="fix" style="width:${pf}%"></i><i class="${rest < 0 ? 'over' : 'var'}" style="width:${Math.min(pct(spent), 100-pf)}%"></i></div>`
-    : `<div class="mh-k">Dépensé ce mois-ci</div><div class="mh-v">${eur(fixed+spent)}</div><div class="mh-s">Fixe ton budget pour voir ce qu'il te reste.</div>`}
-    <div class="legend2"><span><i class="ldot fix"></i>Abonnements <b>${eur(fixed)}</b></span><span><i class="ldot var"></i>Dépenses <b>${eur(spent)}</b></span>${budget && rest > 0 ? `<span><i class="ldot rest"></i>Reste <b>${eur(rest)}</b></span>` : ''}</div>
+      <div class="stackbar"><i class="fix" style="width:${pf}%"></i><i class="${rest < 0 ? 'over' : 'var'}" style="width:${Math.min(pct(spent), 100-pf)}%"></i></div>
+      <div class="legend2"><span><i class="ldot fix"></i>Abonnements <b>${eur(fixed)}</b></span><span><i class="ldot var"></i>Dépenses <b>${eur(spent)}</b></span>${rest > 0 ? `<span><i class="ldot rest"></i>Reste <b>${eur(rest)}</b></span>` : ''}</div>`
+    : `<div class="mh-k">Dépensé ce mois-ci</div><div class="mh-v">${eur(fixed+spent)}</div><div class="mh-s">Ajoute tes revenus pour voir ce qu'il te reste vraiment.</div>
+      <div class="legend2"><span><i class="ldot fix"></i>Abonnements <b>${eur(fixed)}</b></span><span><i class="ldot var"></i>Dépenses <b>${eur(spent)}</b></span></div>`}
     <button class="mh-btn" type="button" id="editBudget">✎ ${budget ? 'Modifier mon budget' : 'Fixer mon budget'}</button>`;
   $('mPrev').onclick = () => { moneyMonth = new Date(moneyMonth.getFullYear(), moneyMonth.getMonth()-1, 1); renderMoney(); };
   $('mNext').onclick = () => { moneyMonth = new Date(moneyMonth.getFullYear(), moneyMonth.getMonth()+1, 1); renderMoney(); };
   $('editBudget').onclick = openBudgetSheet;
+  renderIncomes(mk);
 
   const ex = m.expenses.filter(e=>e.date.slice(0,7)===mk).sort((a,b)=>b.date.localeCompare(a.date));
   $('expCount').textContent = ex.length ? `${ex.length} dépense${ex.length>1?'s':''}` : '';
@@ -1474,6 +1496,58 @@ function openBudgetSheet(){
   setTimeout(()=>$('bgAmount') && $('bgAmount').focus(), 80);
 }
 $('addExp').onclick = () => openExpenseSheet(null);
+
+/* --- Revenus --- */
+const INC_PRESETS = [['Salaire','💼'],['Alternance','🎓'],['Bourse','🎓'],['APL','🏠'],['Aide des parents','💝'],['Vinted','👗'],['Prime','⭐'],['Baby-sitting','🧸'],['Remboursement','↩️'],['Autre','✨']];
+function renderIncomes(mk){
+  const m = state.money, rec = m.incomes.filter(x=>!x.since || x.since<=mk), ext = m.extras.filter(x=>x.date.slice(0,7)===mk).sort((a,b)=>b.date.localeCompare(a.date));
+  const total = monthIncome(mk);
+  $('incTotal').textContent = total ? `${eur(total)} ce mois-ci` : '';
+  const w = $('incList'); w.innerHTML = '';
+  if (!rec.length && !ext.length){ w.innerHTML = '<div class="empty-s"><span class="e">💶</span>Salaire, bourse, APL, aide des parents, ventes Vinted…<br>Ajoute ce que tu gagnes pour savoir ce qu\'il te reste vraiment.</div>'; return; }
+  const row = (x, sub, plus, onclick) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'txn' + (x.active===false ? ' off' : '');
+    b.innerHTML = `<span class="cbub">${esc(x.emoji||'💶')}</span><div class="grow"><b>${esc(x.name)}</b><small>${sub}</small></div><span class="amt plus">+${eur(x.amount)}</span>`;
+    b.onclick = onclick; w.appendChild(b); };
+  if (rec.length) w.insertAdjacentHTML('beforeend', '<div class="dayhead">Chaque mois</div>');
+  rec.forEach(x=>row(x, x.active===false ? 'En pause' : `versé le ${x.day||1}`, true, () => openIncomeSheet(x, 'mois')));
+  if (ext.length) w.insertAdjacentHTML('beforeend', '<div class="dayhead">Ce mois-ci</div>');
+  ext.forEach(x=>row(x, dayName(x.date), true, () => openIncomeSheet(x, 'once')));
+}
+function openIncomeSheet(item, kindIn){
+  const def = monthKey(moneyMonth) === monthKey(REAL_TODAY) ? isoD(REAL_TODAY) : isoD(moneyMonth);
+  const d = item ? {...item, kind:kindIn} : {kind:'mois', name:'', emoji:'', amount:'', day:1, date:def};
+  const draw = () => {
+    openSheet(`<h2>${item ? esc(item.name) : 'Nouveau revenu'}</h2>
+      ${item ? '' : `<span class="flabel">Type</span><div class="choice" id="inKind"><button type="button" data-v="mois" aria-pressed="${d.kind==='mois'}">Chaque mois</button><button type="button" data-v="once" aria-pressed="${d.kind==='once'}">Une seule fois</button></div>
+        <span class="flabel">Raccourcis</span><div class="presets" id="inPre">${INC_PRESETS.map(([n,e])=>`<button type="button" data-n="${esc(n)}" aria-pressed="${d.name===n}">${e} ${esc(n)}</button>`).join('')}</div>`}
+      <span class="flabel">Nom</span><input class="inp full" id="inName" maxlength="40" placeholder="${d.kind==='mois' ? 'ex. Salaire' : 'ex. Vente Vinted'}" value="${esc(d.name)}">
+      <div class="amountbox"><input class="bigamount" id="inAmount" inputmode="decimal" placeholder="0" autocomplete="off" value="${d.amount ? String(d.amount).replace('.',',') : ''}" aria-label="Montant en euros"><span>€</span></div>
+      ${d.kind==='mois' ? `<span class="flabel">Versé le</span><select class="inp full" id="inDay">${Array.from({length:31},(_,i)=>`<option value="${i+1}" ${d.day===i+1?'selected':''}>${i+1} du mois</option>`).join('')}</select>`
+        : `<span class="flabel">Date</span><input class="inp full" id="inDate" type="date" value="${d.date}">`}
+      <button class="btn full" type="button" id="inSave">${item ? 'Enregistrer' : 'Ajouter le revenu'}</button>
+      ${item ? `<div class="sheet-actions">${d.kind==='mois' ? `<button class="chip" type="button" id="inPause">${item.active===false ? '▶ Réactiver' : '⏸ Mettre en pause'}</button>` : ''}<button class="chip" type="button" id="inDel">Supprimer</button></div>` : ''}`, 'Revenu');
+    const keep = () => { d.name = $('inName').value.trim(); d.amount = num($('inAmount').value) || ''; if ($('inDay')) d.day = +$('inDay').value; if ($('inDate')) d.date = $('inDate').value || def; };
+    if ($('inKind')) $('inKind').querySelectorAll('button').forEach(b=>b.onclick = () => { keep(); d.kind = b.dataset.v; draw(); });
+    if ($('inPre')) $('inPre').querySelectorAll('button').forEach(b=>b.onclick = () => { keep(); const p = INC_PRESETS.find(x=>x[0]===b.dataset.n); d.name = p[0]; d.emoji = p[1]; draw(); setTimeout(()=>$('inAmount').focus(), 60); });
+    $('inSave').onclick = () => {
+      keep(); if (!d.name){ toast('Donne un nom à ce revenu'); $('inName').focus(); return; }
+      if (!(d.amount > 0)){ toast('Écris le montant'); $('inAmount').focus(); return; }
+      const emoji = (INC_PRESETS.find(x=>norm(x[0])===norm(d.name)) || [])[1] || d.emoji || '💶';
+      if (item){ Object.assign(item, d.kind==='mois' ? {name:d.name, amount:d.amount, day:d.day, emoji} : {name:d.name, amount:d.amount, date:d.date, emoji}); }
+      else if (d.kind==='mois') state.money.incomes.push({id:uid(), name:d.name.slice(0,40), emoji, amount:d.amount, day:d.day||1, active:true, since:monthKey(moneyMonth)});
+      else state.money.extras.push({id:uid(), name:d.name.slice(0,40), emoji, amount:d.amount, date:d.date});
+      save(); closeSheet(); renderMoney(); toast(item ? 'Revenu modifié' : `+${eur(d.amount)} ajoutés 💶`);
+    };
+    if (item){
+      if ($('inPause')) $('inPause').onclick = () => { item.active = item.active===false; save(); closeSheet(); renderMoney(); };
+      armConfirm($('inDel'), 'Supprimer pour de bon ?', () => {
+        if (d.kind==='mois') state.money.incomes = state.money.incomes.filter(x=>x!==item); else state.money.extras = state.money.extras.filter(x=>x!==item);
+        save(); closeSheet(); renderMoney(); toast('Revenu supprimé'); });
+    }
+  };
+  draw();
+}
+$('addInc').onclick = () => openIncomeSheet(null);
 
 /* --- Abonnements --- */
 function renderSubs(){
@@ -2088,7 +2162,7 @@ function renderHome(){
   const inArc = REAL_TODAY >= START && REAL_TODAY <= END, k = keyD(TODAY), st = dayStats(k), p = progress(), di = dayIndex(TODAY)+1;
   $('homePill').innerHTML = inArc ? `❄️ Jour <b>${di}</b> / 92` : REAL_TODAY < START ? '❄️ Départ le 1er octobre' : '❄️ Winter Arc terminé';
   const iso = isoD(REAL_TODAY), mx = state.meals[iso] || {};
-  const mk = monthKey(REAL_TODAY), budget = state.money.budget[mk] || 0, spent = monthSpent(mk) + monthFixed(mk);
+  const mk = monthKey(REAL_TODAY), income = monthIncome(mk), budget = income || state.money.budget[mk] || 0, spent = monthSpent(mk) + monthFixed(mk);
   const g = state.money.goals.find(g=>g.saved < g.price) || state.money.goals[0];
   const left = state.shop.filter(x=>!x.done).length;
   const q = QUOTES[(dayIndex(REAL_TODAY)*5 + 1) % QUOTES.length];

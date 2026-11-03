@@ -331,7 +331,7 @@ body{background:radial-gradient(900px 520px at 105% -8%,#f7e1ef 0%,rgba(247,225,
 .bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;gap:2px;padding:6px;
   width:min(calc(100% - 24px),520px);background:rgba(255,255,255,.84);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);
   border-radius:28px;box-shadow:0 14px 40px rgba(70,40,110,.22),inset 0 0 0 1px rgba(255,255,255,.8)}
-.nb{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 7px;border-radius:22px;font-size:11px;font-weight:800;color:var(--ink-soft);transition:background .25s,color .25s}
+.nb{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 7px;border-radius:22px;font-size:10.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;color:var(--ink-soft);transition:background .25s,color .25s}
 .nb svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nb:hover{color:var(--ink)}
 .nb[aria-current="page"]{background:linear-gradient(135deg,var(--lilac),var(--rose));color:#fff;box-shadow:0 6px 16px rgba(183,155,224,.55)}
@@ -512,6 +512,28 @@ button.tile:hover{transform:translateY(-2px)}
 .presets button[aria-pressed="true"]{background:var(--ink);color:#fff}
 .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .sheet-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:center}
+/* à faire */
+.todoadd .ask-row .inp{background:var(--snow);font-size:16px}
+.todoadd .choice{margin-top:10px}
+.todoadd .choice button,.sheet .choice.cat button{font-size:13px}
+.tgroup + .tgroup{margin-top:6px}
+.tghead{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:800;color:var(--ink-soft);margin:14px 0 4px}
+.tgroup:first-child .tghead{margin-top:0}
+.tghead.late{color:#c2477a}
+.task{display:flex;align-items:center;gap:12px;padding:8px 2px}
+.task + .task{border-top:1px solid var(--line)}
+.tcheck{width:28px;height:28px;flex:0 0 28px;border-radius:50%;box-shadow:inset 0 0 0 2px #cdbfe0;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;transition:background .2s,transform .15s}
+.tcheck:hover{transform:scale(1.1);box-shadow:inset 0 0 0 2px var(--lilac)}
+.task.star .tcheck{box-shadow:inset 0 0 0 2px var(--apricot)}
+.task.done .tcheck{background:var(--sage);box-shadow:none}
+.tbody{flex:1;min-width:0;text-align:left;padding:2px 0}
+.tbody b{display:block;font-weight:700;font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+.tbody small{display:flex;gap:6px;flex-wrap:wrap;color:var(--ink-soft);font-size:12px;margin-top:2px}
+.task.done .tbody b{text-decoration:line-through;color:var(--ink-soft);font-weight:600}
+.tstar{font-size:15px}
+.tmeta-late{color:#c2477a;font-weight:800}
+.donebtn{margin-top:12px;font-size:13px;font-weight:800;color:var(--lilac-deep)}
+.tile.todo .task{padding:6px 0}
 /* feuille du bas */
 .sheet-bg{position:fixed;inset:0;z-index:40;background:rgba(30,20,50,.38);animation:fade .25s}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;max-width:640px;margin:0 auto;max-height:88vh;overflow:auto;background:var(--card);
@@ -813,6 +835,20 @@ body.noscroll{overflow:hidden}
   </section>
 </section>
 
+<section class="view" id="v-todo" hidden>
+  <header class="apphead"><div><div class="eyebrow" id="todoDate">À faire</div><h1>Ma <em>to-do</em></h1></div><div class="pill" id="todoPill"></div></header>
+  <section class="panel" id="p-todo" hidden>
+    <div class="stack">
+      <form class="box todoadd" id="todoForm">
+        <div class="ask-row"><input class="inp" id="todoInput" maxlength="120" placeholder="Ajouter une tâche… (ex. appeler la banque)" aria-label="Nouvelle tâche" autocomplete="off"><button class="btn" type="submit">Ajouter</button></div>
+        <div class="choice" id="todoWhen"></div>
+        <div class="choice" id="todoCat"></div>
+      </form>
+      <div class="box" id="todoList"></div>
+    </div>
+  </section>
+</section>
+
 <section class="view" id="v-lumi" hidden>
   <header class="apphead"><div><div class="eyebrow">Ta coach</div><h1>Parle à <em>Lumi</em></h1></div></header>
   <section class="panel" id="p-coach" hidden>
@@ -851,6 +887,7 @@ body.noscroll{overflow:hidden}
   <button class="nb" type="button" data-view="arc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 19.5 9 8l3.4 5.8L15 9.5l6.5 10z"/><path d="M7.3 11.3 9 12.6l1.5-1.4"/></svg>Winter Arc</button>
   <button class="nb" type="button" data-view="food"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10"/><path d="M18 21V3c-2.3 1.2-3.7 3.9-3.7 7.2V14H18"/></svg>Cuisine</button>
   <button class="nb" type="button" data-view="money"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 7V5.8A1.8 1.8 0 0 0 16.7 4H6a2.5 2.5 0 0 0-2.5 2.5v11A2.5 2.5 0 0 0 6 20h12.5a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H6"/><circle cx="16.3" cy="13.5" r="1.3"/></svg>Argent</button>
+  <button class="nb" type="button" data-view="todo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.5 12.2 2.4 2.4 4.7-5"/></svg>À faire</button>
   <button class="nb" type="button" data-view="lumi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 13.7 9a2 2 0 0 0 1.3 1.3l5.5 1.7-5.5 1.7a2 2 0 0 0-1.3 1.3L12 20.5 10.3 15A2 2 0 0 0 9 13.7L3.5 12 9 10.3A2 2 0 0 0 10.3 9z"/></svg>Lumi</button>
 </nav>
 <div class="sheet-bg" id="sheetBg" hidden></div>
@@ -915,6 +952,7 @@ function normalize(s){
   const m = s.money = s.money || {};
   m.goals = m.goals || []; m.budget = m.budget || {}; m.expenses = m.expenses || []; m.wishes = m.wishes || []; m.kept = m.kept || 0; m.subs = m.subs || []; m.incomes = m.incomes || []; m.extras = m.extras || [];
   s.meals = s.meals || {}; s.shop = s.shop || []; s.recipes = s.recipes || [];
+  s.todos = s.todos || [];
   s.prefs = Object.assign({weeks:'1', slots:'both', people:'1', budget:'', wish:''}, s.prefs || {});
   for (const k of Object.keys(s.weeks)){
     const mm = k.match(/^(\d{4})-(\d\d)-S(\d)$/); if (!mm) continue;
@@ -926,7 +964,7 @@ function normalize(s){
   s.v = 3; return s;
 }
 const hasData = () => Object.keys(state.days).length || Object.keys(state.weeks).length || state.money.goals.length ||
-  state.money.expenses.length || state.recipes.length || state.shop.length || Object.keys(state.meals).length;
+  state.money.expenses.length || state.recipes.length || state.shop.length || Object.keys(state.meals).length || state.todos.length;
 let state = normalize({});
 let chat = [];
 
@@ -1290,6 +1328,8 @@ function context(){
   lines.push(`Repas prévus : aujourd'hui ${ml(isoD(REAL_TODAY))} ; demain ${ml(isoD(addDays(REAL_TODAY,1)))}.`);
   lines.push(`Liste de courses : ${state.shop.filter(x=>!x.done).map(x=>x.name).slice(0,40).join(', ') || 'vide'}.`);
   lines.push(`Recettes enregistrées : ${state.recipes.map(r=>r.title).slice(0,40).join(' ; ') || 'aucune'}.`);
+  { const t = isoD(REAL_TODAY), open = state.todos.filter(x=>!x.done);
+    lines.push(`To-do : ${open.length ? open.slice(0,25).map(x=>`${x.t}${x.due ? ` (${x.due < t ? 'en retard' : x.due===t ? "aujourd'hui" : x.due})` : ''}${x.star ? ' ⭐' : ''}`).join(' ; ') : 'rien à faire'}.`); }
   const won = BADGES.filter(b=>b.ok()).map(b=>b.n); lines.push('Badges : ' + (won.join(', ')||'aucun pour l\'instant'));
   return lines.join('\n');
 }
@@ -1315,7 +1355,7 @@ function renderChat(){
   chat.forEach(m=>addMsg(m.role==='user'?'me':'ai', m.role==='user'? esc(m.content).replace(/\n/g,'<br>') : md(m.content)));
   if (!sample) addMsg('sys', "Lumi se réveille quand tu ouvres cette page dans Claude. Si elle ne répond pas, vérifie que tu as autorisé Claude pour cette page.");
 }
-const SUGG = ["Motive-moi pour aujourd'hui 💪","Comment économiser plus ce mois-ci ? 💰","Un repas avec ce qu'il y a sur ma liste","J'ai raté hier, aide-moi à repartir","Une séance de souplesse de 15 min","Idée de séance sport à la maison","Un repas équilibré et rapide","Fais le point sur ma semaine","Comment tenir la règle des 5 min ?"];
+const SUGG = ["Motive-moi pour aujourd'hui 💪","Aide-moi à organiser ma to-do 📝","Comment économiser plus ce mois-ci ? 💰","Un repas avec ce qu'il y a sur ma liste","J'ai raté hier, aide-moi à repartir","Une séance de souplesse de 15 min","Idée de séance sport à la maison","Un repas équilibré et rapide","Fais le point sur ma semaine","Comment tenir la règle des 5 min ?"];
 $('suggest').innerHTML = SUGG.map(s=>`<button class="chip" type="button">${esc(s)}</button>`).join('');
 $('suggest').querySelectorAll('button').forEach(b=>b.onclick=()=>ask(b.textContent));
 const errCopy = c => c==='not_granted' ? "Lumi a besoin de ton autorisation pour utiliser Claude. Rouvre la page et accepte la demande." :
@@ -2154,6 +2194,105 @@ function armConfirm(btn, label, action){
   };
 }
 
+/* ================= À FAIRE ================= */
+const TODO_CATS = [['perso','💖','Perso'],['cours','📚','Cours / travail'],['maison','🏠','Maison'],['admin','📄','Admin'],['rdv','📅','Rendez-vous'],['achats','🛍️','À acheter']];
+const todoCat = id => TODO_CATS.find(c=>c[0]===id);
+let todoWhen = 'today', todoCatSel = '', showDone = false;
+const sundayOf = d => addDays(mondayOf(d), 6);
+const whenToDue = w => w==='today' ? isoD(REAL_TODAY) : w==='tomorrow' ? isoD(addDays(REAL_TODAY,1)) : w==='week' ? isoD(sundayOf(REAL_TODAY)) : '';
+function dueText(due){
+  if (!due) return '';
+  const t = isoD(REAL_TODAY);
+  if (due < t){ const n = Math.round((new Date(t+'T12:00') - new Date(due+'T12:00'))/864e5); return n===1 ? 'hier' : `il y a ${n} jours`; }
+  if (due === t) return "aujourd'hui";
+  if (due === isoD(addDays(REAL_TODAY,1))) return 'demain';
+  return dayName(due).toLowerCase();
+}
+function todoGroups(){
+  const t = isoD(REAL_TODAY), tm = isoD(addDays(REAL_TODAY,1)), open = state.todos.filter(x=>!x.done);
+  const by = f => open.filter(f).sort((a,b)=>(b.star?1:0)-(a.star?1:0) || (a.due||'9').localeCompare(b.due||'9') || a.added-b.added);
+  return [
+    ['late', 'En retard', by(x=>x.due && x.due < t)],
+    ['today', "Aujourd'hui", by(x=>x.due===t)],
+    ['tomorrow', 'Demain', by(x=>x.due===tm)],
+    ['later', 'Plus tard', by(x=>x.due && x.due > tm)],
+    ['nodate', 'Quand je peux', by(x=>!x.due)]
+  ].filter(g=>g[2].length);
+}
+function taskRow(x){
+  const el = document.createElement('div'); el.className = 'task' + (x.done ? ' done' : '') + (x.star ? ' star' : '');
+  const c = todoCat(x.cat), late = !x.done && x.due && x.due < isoD(REAL_TODAY);
+  const meta = [c ? `${c[1]} ${c[2]}` : '', x.due && !x.done ? `<span class="${late?'tmeta-late':''}">📆 ${dueText(x.due)}</span>` : '', x.note ? '📝' : ''].filter(Boolean);
+  el.innerHTML = `<button class="tcheck" type="button" role="checkbox" aria-checked="${!!x.done}" aria-label="${esc(x.t)}">${x.done ? '✓' : ''}</button>
+    <button class="tbody" type="button"><b>${x.star ? '<span class="tstar">⭐</span> ' : ''}${esc(x.t)}</b>${meta.length ? `<small>${meta.join('<span>·</span>')}</small>` : ''}</button>`;
+  el.querySelector('.tcheck').onclick = () => toggleTodo(x);
+  el.querySelector('.tbody').onclick = () => openTodoSheet(x);
+  return el;
+}
+function toggleTodo(x){
+  x.done = !x.done; x.doneAt = x.done ? Date.now() : null; save();
+  if (x.done){ boom(false); const left = state.todos.filter(y=>!y.done && y.due && y.due <= isoD(REAL_TODAY)).length;
+    toast(left ? `Bravo ✓ Encore ${left} pour aujourd'hui` : 'Bravo ✓'); }
+  if (nav.view === 'home') renderHome(); else renderTodo();
+}
+function renderTodo(){
+  $('todoDate').textContent = `${cap(DOW[REAL_TODAY.getDay()])} ${REAL_TODAY.getDate()} ${MONTH_NAMES[REAL_TODAY.getMonth()]}`;
+  const t = isoD(REAL_TODAY), todayN = state.todos.filter(x=>!x.done && x.due && x.due <= t).length;
+  const doneToday = state.todos.filter(x=>x.done && x.doneAt && isoD(new Date(x.doneAt))===t).length;
+  $('todoPill').innerHTML = todayN ? `<b>${todayN}</b> pour aujourd'hui` : doneToday ? `✓ <b>${doneToday}</b> faite${doneToday>1?'s':''} aujourd'hui` : '✨ Rien d\'urgent';
+  $('todoWhen').innerHTML = [['today',"Aujourd'hui"],['tomorrow','Demain'],['week','Cette semaine'],['','Sans date']].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${todoWhen===v}">${l}</button>`).join('');
+  $('todoWhen').querySelectorAll('button').forEach(b=>b.onclick = () => { todoWhen = b.dataset.v; renderTodo(); });
+  $('todoCat').innerHTML = TODO_CATS.map(([v,e,l])=>`<button type="button" data-v="${v}" aria-pressed="${todoCatSel===v}">${e} ${l}</button>`).join('');
+  $('todoCat').querySelectorAll('button').forEach(b=>b.onclick = () => { todoCatSel = todoCatSel===b.dataset.v ? '' : b.dataset.v; renderTodo(); });
+  const w = $('todoList'); w.innerHTML = '';
+  const groups = todoGroups(), done = state.todos.filter(x=>x.done).sort((a,b)=>(b.doneAt||0)-(a.doneAt||0));
+  if (!groups.length) w.innerHTML = `<div class="empty-s"><span class="e">${done.length ? '🎉' : '📝'}</span>${done.length ? 'Tout est fait, profite !' : 'Note ici tout ce que tu as à faire : appels, papiers, cours, ménage, rendez-vous…'}</div>`;
+  groups.forEach(([id,label,items])=>{
+    const g = document.createElement('div'); g.className = 'tgroup';
+    g.innerHTML = `<div class="tghead ${id==='late'?'late':''}"><span>${label}</span><span>${items.length}</span></div>`;
+    items.forEach(x=>g.appendChild(taskRow(x))); w.appendChild(g);
+  });
+  if (done.length){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'donebtn';
+    b.textContent = showDone ? 'Masquer les tâches faites' : `Voir les tâches faites (${done.length})`;
+    b.onclick = () => { showDone = !showDone; renderTodo(); }; w.appendChild(b);
+    if (showDone){
+      const g = document.createElement('div'); g.className = 'tgroup';
+      g.innerHTML = '<div class="tghead"><span>Fait</span></div>'; done.slice(0,30).forEach(x=>g.appendChild(taskRow(x))); w.appendChild(g);
+      const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'chip'; clr.style.marginTop = '10px'; clr.textContent = 'Effacer les tâches faites';
+      armConfirm(clr, 'Effacer pour de bon ?', () => { state.todos = state.todos.filter(x=>!x.done); showDone = false; save(); renderTodo(); toast('Tâches faites effacées'); });
+      w.appendChild(clr);
+    }
+  }
+}
+$('todoForm').addEventListener('submit', e=>{
+  e.preventDefault(); const t = $('todoInput').value.trim(); if (!t){ $('todoInput').focus(); return; }
+  state.todos.push({id:uid(), t:t.slice(0,120), done:false, due:whenToDue(todoWhen), cat:todoCatSel, star:false, note:'', added:Date.now()});
+  $('todoInput').value = ''; save(); renderTodo(); $('todoInput').focus();
+});
+function openTodoSheet(x){
+  const d = {...x};
+  const draw = () => {
+    openSheet(`<h2>Modifier la tâche</h2>
+      <span class="flabel">Tâche</span><input class="inp full" id="tdT" maxlength="120" value="${esc(d.t)}">
+      <span class="flabel">Pour quand</span><div class="choice" id="tdWhen">${[['today',"Aujourd'hui"],['tomorrow','Demain'],['week','Cette semaine'],['','Sans date']].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${(d.due||'')===whenToDue(v)}">${l}</button>`).join('')}</div>
+      <input class="inp full" id="tdDue" type="date" value="${d.due||''}" aria-label="Date">
+      <span class="flabel">Catégorie</span><div class="choice cat" id="tdCat">${TODO_CATS.map(([v,e,l])=>`<button type="button" data-v="${v}" aria-pressed="${d.cat===v}">${e} ${l}</button>`).join('')}</div>
+      <span class="flabel">Note</span><textarea class="inp full" id="tdNote" rows="3" maxlength="500" placeholder="Détails, numéro, adresse…">${esc(d.note||'')}</textarea>
+      <div class="sheet-actions" style="justify-content:flex-start"><button class="chip" type="button" id="tdStar">${d.star ? '⭐ Importante' : '☆ Marquer importante'}</button></div>
+      <button class="btn full" type="button" id="tdSave">Enregistrer</button>
+      <div class="sheet-actions"><button class="chip" type="button" id="tdDone">${x.done ? '↺ Pas encore faite' : '✓ C\'est fait'}</button><button class="chip" type="button" id="tdDel">Supprimer</button></div>`, 'Tâche');
+    const keep = () => { d.t = $('tdT').value.trim() || d.t; d.due = $('tdDue').value || ''; d.note = $('tdNote').value.trim(); };
+    $('tdWhen').querySelectorAll('button').forEach(b=>b.onclick = () => { keep(); d.due = whenToDue(b.dataset.v); draw(); });
+    $('tdCat').querySelectorAll('button').forEach(b=>b.onclick = () => { keep(); d.cat = d.cat===b.dataset.v ? '' : b.dataset.v; draw(); });
+    $('tdStar').onclick = () => { keep(); d.star = !d.star; draw(); };
+    $('tdSave').onclick = () => { keep(); Object.assign(x, {t:d.t.slice(0,120), due:d.due, cat:d.cat, star:d.star, note:d.note.slice(0,500)}); save(); closeSheet(); nav.view==='home' ? renderHome() : renderTodo(); toast('Tâche enregistrée'); };
+    $('tdDone').onclick = () => { closeSheet(); toggleTodo(x); };
+    armConfirm($('tdDel'), 'Supprimer pour de bon ?', () => { state.todos = state.todos.filter(y=>y!==x); save(); closeSheet(); nav.view==='home' ? renderHome() : renderTodo(); toast('Tâche supprimée'); });
+  };
+  draw();
+}
+
 /* ================= ACCUEIL ================= */
 function renderHome(){
   const h = new Date().getHours();
@@ -2175,6 +2314,7 @@ function renderHome(){
       <div class="bar"><i style="width:${(p*100).toFixed(1)}%"></i></div>
       <span class="s">${Math.round(p*SUMMIT).toLocaleString('fr-FR')} m d'altitude · sommet à 3 000 m</span>
     </div>
+    <div class="tile todo span2" id="homeTodo"></div>
     <button class="tile menu span2" type="button" data-go="food:meals">
       <div class="k">Au menu aujourd'hui<span class="lnk">Menus →</span></div>
       ${SLOTS.map(([s,l])=>{ const v = mx[s], r = v && v.r && recipeById(v.r);
@@ -2206,6 +2346,12 @@ function renderHome(){
     if (!on){ if (!before && dayStats(k).perfect){ boom(true); toast('Journée parfaite ! Tu brilles ✨'); } else boom(false); }
     checkBadges();
   });
+  { const t = isoD(REAL_TODAY), list = state.todos.filter(x=>!x.done && (!x.due || x.due <= t)).sort((a,b)=>(b.star?1:0)-(a.star?1:0) || (a.due?0:1)-(b.due?0:1) || (a.due||'').localeCompare(b.due||'')), n = state.todos.filter(x=>!x.done && x.due && x.due <= t).length;
+    const box = $('homeTodo');
+    box.innerHTML = `<div class="k">À faire aujourd'hui${n ? ` · ${n}` : ''}<button class="lnk" type="button" data-go="todo">Tout voir →</button></div>`;
+    if (!list.length) box.insertAdjacentHTML('beforeend', '<div class="s">Rien d\'urgent ✨ Ajoute une tâche dans « À faire ».</div>');
+    list.slice(0,4).forEach(x=>box.appendChild(taskRow(x)));
+    box.querySelector('[data-go]').onclick = () => show('todo'); }
   $('homeAsk').hidden = !sample;
   $('homeAsk').onsubmit = e => { e.preventDefault(); const t = $('homeAskInput').value.trim(); if (!t) return; show('lumi'); ask(t); };
 }
@@ -2276,8 +2422,8 @@ function openIdeaSheet(x){
 }
 
 /* ================= NAVIGATION ================= */
-const TABS = {today:renderToday, cal:renderCal, week:renderWeeks, stats:renderStats, bilan:renderBilan, meals:renderMeals, shop:renderShop, recipes:renderRecipes, money:renderMoney, subs:renderSubs, goals:renderGoals, coach:renderChat};
-const VIEWS = {home:[], arc:['today','cal','week','stats','bilan'], food:['meals','shop','recipes'], money:['money','subs','goals'], lumi:['coach']};
+const TABS = {today:renderToday, cal:renderCal, week:renderWeeks, stats:renderStats, bilan:renderBilan, meals:renderMeals, shop:renderShop, recipes:renderRecipes, money:renderMoney, subs:renderSubs, goals:renderGoals, todo:renderTodo, coach:renderChat};
+const VIEWS = {home:[], arc:['today','cal','week','stats','bilan'], food:['meals','shop','recipes'], money:['money','subs','goals'], todo:['todo'], lumi:['coach']};
 const PANEL_VIEW = {}; for (const v in VIEWS) VIEWS[v].forEach(p=>PANEL_VIEW[p] = v);
 let nav = {view:'home', arc:'today', food:'meals', money:'money'};
 try { const s = JSON.parse(localStorage.getItem('winterArcPauline.nav')||'null'); if (s && VIEWS[s.view]) nav = Object.assign(nav, s); } catch(e){}

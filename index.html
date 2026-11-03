@@ -11,10 +11,10 @@
 <title>Organisation Pauline</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
 /* Direction : magazine de vie quotidienne. Papier crème, encre espresso, bordeaux et rose poudré, or pour les exceptions.
-   Titres en Instrument Serif (italiques éditoriaux), interface en Manrope. Grille asymétrique, panneaux sombres pour les moments signature. */
+   Titres et chiffres en Bricolage Grotesque (contraste de graisses : gras + accents fins bordeaux), interface en Manrope. Grille asymétrique, panneaux sombres pour les moments signature. */
 :root{
   --cream:#F2ECE4; --paper:#FBF8F3; --sand:#E8DFD3; --sand-2:#DED2C3;
   --espresso:#1C1411; --cocoa:#33241F; --ink:#1C1411; --ink-soft:#74655D; --ink-faint:#A2948B;
@@ -24,7 +24,7 @@
   /* anciens noms, conservés pour le code existant */
   --snow:var(--cream); --card:var(--paper); --sage:var(--olive); --sage-deep:var(--olive-deep); --rose:var(--brick);
   --apricot:var(--gold); --lilac:var(--wine); --lilac-deep:var(--bordeaux); --blush:var(--blush-2); --mist:var(--sand); --night:var(--espresso);
-  --f-serif:"Instrument Serif","Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --f-serif:"Bricolage Grotesque","Manrope",ui-sans-serif,system-ui,sans-serif;
   --f-ui:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-display:var(--f-serif); --f-hand:var(--f-serif); --f-body:var(--f-ui);
   --r:16px; --r-sm:11px; --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
@@ -703,6 +703,31 @@ body.noscroll{overflow:hidden}
 ::view-transition-group(arcsig){animation-duration:.75s;animation-timing-function:var(--ease)}
 @keyframes vtOut{to{opacity:0;transform:translateY(-14px) scale(.985);filter:blur(8px)}}
 @keyframes vtIn{from{opacity:0;transform:translateY(30px) scale(.99);filter:blur(12px)}}
+
+/* ---------- TYPOGRAPHIE : grotesque contemporaine ---------- */
+*{font-style:normal!important}
+h2,h3,.apphead h1,.hello,.brand h1,.planner h2,.prop h3,.sh-head h2,.rcard2 b,.idea b,.mrow .grow span,.lumi-h b,.chathead h3,.rail-brand b,.pd b,.weeks th,.mh-month{
+  font-family:var(--f-serif);font-weight:650;font-variation-settings:"wdth" 90,"opsz" 96;letter-spacing:-.035em}
+h3,.rcard2 b,.idea b,.mrow .grow span,.pd b,.weeks th,.mh-month{font-weight:600;letter-spacing:-.025em;font-variation-settings:"wdth" 92,"opsz" 48}
+.hello{font-weight:700;letter-spacing:-.042em;line-height:.86;font-size:clamp(70px,21vw,176px)}
+.hello .l2{padding-left:0;margin-top:0}
+.apphead h1{font-size:clamp(44px,12.5vw,92px);letter-spacing:-.042em;line-height:.9}
+h2 em,h3 em,.apphead h1 em,.hello em,.brand h1 span,.rail-brand b em,.planner h2 em,.prop h3 em,.lumi-h b em,.as-num .of em{font-weight:250!important;color:var(--bordeaux)}
+.brand h1 span,.rail-brand b em,.as-num .of em{color:var(--powder)}
+.mast-lede em{font-family:var(--f-ui);font-size:1em;font-weight:800;color:var(--bordeaux)}
+.as-num .big,.mh-v,.tile .v,.kpi b,.daypill b,.altimeter .alt,.dlabel b,.cnt b,.rstat .pct,.txn .amt,.money,.as-alt b,.as-rt-h b,.legend2 b,.bigamount,.ring span,.gring text,.pill b,.amountbox span,.score b,.tile.t-goal div[style*="f-serif"]{
+  font-family:var(--f-serif);font-weight:300!important;font-variation-settings:"wdth" 85,"opsz" 96;letter-spacing:-.05em}
+.as-num .big{font-weight:250!important;letter-spacing:-.07em}
+.tile .v,.mh-v{letter-spacing:-.06em}
+.txn .amt,.money,.rstat .pct,.legend2 b,.cnt b{letter-spacing:-.02em;font-weight:400!important}
+.cover i{font-family:var(--f-serif);font-weight:300;letter-spacing:-.04em}
+.badge .medal{font-family:var(--f-serif);font-weight:300}
+.t-quote p,.quote p{font-family:var(--f-serif);font-weight:300;letter-spacing:-.035em;font-variation-settings:"wdth" 88,"opsz" 96}
+.qmark{font-weight:700;color:var(--bordeaux)}
+.motto,.hint3d,.hand{font-family:var(--f-ui);font-weight:500;letter-spacing:0}
+.hand{color:var(--bordeaux);font-weight:700;font-size:15px}
+.dayrow.today .dlabel b{font-weight:600}
+.mrow .grow span.muted{font-weight:400;font-size:16px}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
